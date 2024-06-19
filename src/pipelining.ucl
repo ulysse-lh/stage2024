@@ -1,0 +1,94 @@
+module main {
+
+const N: integer;
+
+
+var input: [integer]integer;
+var out1, out2: [integer]integer;
+var A1, A2, B1, B2: [integer]integer;
+var i1, i2: integer;
+var finished1, finished2: boolean;
+
+var t: integer;
+
+
+init {
+    assume N > 0;
+
+    havoc input;
+
+    i1 = 0;
+    i2 = 0;
+    finished1 = false;
+    finished2 = false;
+    t = 0;
+}
+
+
+
+
+next {
+    t' = t + 1;
+    call next1();
+    call next2();
+}
+
+
+
+
+procedure next1() modifies A1, B1, out1, i1, finished1; {
+    if (!finished1) {
+        if (i1 >= N) {
+            finished1 = true;
+        } else {
+
+            A1[i1] = foo(input[i1]);
+            B1[i1] = bar(A1[i1]);
+            out1[i1] = B1[i1];
+            i1 = i1 + 1;
+        }
+    }
+}
+
+
+
+procedure next2() modifies A2, B2, out2, i2, finished2; {
+    if (!finished2) {
+        if (i2 >= N + 2) {
+            finished2 = true;
+        } else {
+
+            if (i2 < N) {
+                A2[i2] = foo(input[i2]);
+            }
+
+            if (1 <= i2 < N + 1) {
+                B2[i2 - 1] = bar(A2[i2]);
+            }
+
+            if (2 <= i2) {
+                out2[i2 - 2] = bar(B2[i2 - 2]);
+            }
+
+            i2 = i2 + 1;
+        }
+    }
+}
+
+
+
+
+invariant i: ;
+
+
+
+
+
+control {
+    o = induction(6);
+    checkk;print_results;
+    o.print_cex;
+}
+
+
+}
