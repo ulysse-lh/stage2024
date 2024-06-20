@@ -62,7 +62,7 @@ procedure next1() modifies A1, B1, out1, i1, finished1; {
 
             A1[i1] = foo(in12[i1]);
             B1[i1] = bar(A1[i1]);
-            out1[i1] = B1[i1];
+            out1[i1] = baz(B1[i1]);
             i1 = i1 + 1;
         }
     }
@@ -81,11 +81,11 @@ procedure next2() modifies A2, B2, out2, i2, finished2; {
             }
 
             if (1 <= i2 < N + 1) {
-                B2[i2 - 1] = bar(A2[i2]);
+                B2[i2 - 1] = bar(A2[i2 - 1]);
             }
 
             if (2 <= i2) {
-                out2[i2 - 2] = bar(B2[i2 - 2]);
+                out2[i2 - 2] = baz(B2[i2 - 2]);
             }
 
             i2 = i2 + 1;
@@ -99,10 +99,9 @@ invariant valid_stuff: t >= 0 && 0 <= i1 <= t && 0 <= i2 <= t && (t < N ==> i1 =
                         (finished1 ==> i1 == N) && (finished2 ==> i2 == N + 2) && (t > N ==> finished1) && (t > N + 2 ==> finished2);
 
 
-
-invariant zer: A1 == A2;
-//invariant sldfkf: finished1 && finished2 ==> out1 == out2;
-//invariant dqsflk: forall (k: integer) :: 0 <= k < i1 - 3 && k < i2 - 3 ==> out1[k] == out2[k];
+invariant A_eq: A1 == A2;
+invariant B_eq: t > 0 ==> old(B1) == B2;
+invariant out_eq: t > 1 ==> history(out1, 2) == out2;
 
 
 
