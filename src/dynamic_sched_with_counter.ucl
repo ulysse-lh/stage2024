@@ -1,0 +1,77 @@
+module main {
+
+function cond(l: integer): boolean;
+function slow(l: integer): integer;
+function fast(l: integer): integer;
+
+var x1, x2: integer;
+var i1, i2: integer;
+var state2: integer;
+
+var x_in: integer;
+
+var t: integer;
+
+init {
+    havoc x_in;
+
+    x1 = x_in;
+    x2 = x_in;
+    state2 = 0;
+    i1 = 0;
+    i2 = 0;
+
+    t = 0;
+}
+
+
+
+next {
+    t' = t + 1;
+    call next1();
+    call next2();
+}
+
+
+
+procedure next1() modifies x1, i1; {
+    x1 = if (cond(x1)) then slow(x1) else fast(x1);
+    i1 = i1 + 1;
+}
+
+
+procedure next2() modifies x2, state2, i2; {
+    case
+        state2 == 0: {
+            if (cond(x2)) {
+                state2 = 1;
+            } else {
+                x2 = fast(x2);
+                i2 = i2 + 1;
+            }
+        }
+        state2 == 1: {
+            state2 = 2;
+        }
+        state2 == 2: {
+            x2 = slow(x2);
+            i2 = i2 + 1;
+            state2 = 1;
+        }
+    esac;
+}
+
+invariant valid_stuff: t >= 0 && i1 == t && 0 <= i2 <= t;
+invariant goal: i1 == i2 ==> x1 == x2;
+
+
+
+control {
+    o = induction(6);
+    check;print_results;
+    o.print_cex;
+}
+
+
+
+}
