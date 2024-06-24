@@ -82,8 +82,12 @@ invariant valid_stuff: t >= 0 && 0 <= state1 <= 2 && 0 <= state2 <= 4 && 0 <= i1
                         (t > 0 && state2 == 3 ==> old(state2) == 2) && (t > 0 && state2 == 4 ==> old(state2) == 4 || old(state2) == 1) &&
                         (state1 > 0 <==> t > 0) && (state2 > 0 <==> t > 0);
 
+
+// main goal
 invariant goal: state1 == 2 && state2 == 4 ==> i1 == i2 && x1 == x2;
 
+// alternative proof (actual loop invariant)
+invariant loop_inv: state1 == 1 && state2 == 2 && i1 == i2 ==> x1 == x2;
 
 
 control {

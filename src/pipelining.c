@@ -45,7 +45,7 @@ static int stage = 0;
     }
 }
 
-// actual pipelining
+// proper dynamic-scheduled pipelining
 #else
 
 
