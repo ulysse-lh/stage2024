@@ -1,0 +1,120 @@
+module main {
+
+
+const N: integer;
+
+var payload_stage1_2, payload_stage2_3, payload_stage2_3bis: integer;
+var stall, was_stalled: boolean;
+
+var hist1, hist2: [integer]integer;
+var pixel: [integer]integer;
+var i1, i2: integer;
+var state1, state2: integer;
+var t: integer;
+
+var hist: [integer]integer;
+
+init {
+
+    assume N > 0;
+
+    havoc hist;
+
+    hist1 = hist;
+    hist2 = hist;
+    t = 0;
+    state1 = 0;
+    state2 = 0;
+    i1 = 0;
+    i2 = 0;
+    stall = false;
+    was_stalled = false;
+}
+
+next {
+    t' = t + 1;
+    call next1();
+    call next2();
+}
+
+
+procedure next1() modifies hist1, i1, state1; {
+    case
+        state1 == 0: {
+            if (i1 >= N) {
+                state1 = 1;
+            } else {
+                hist1[pixel[i1]] = hist1[pixel[i1]] + 1;
+                i1 = i1 + 1;
+            }
+        }
+    esac;
+}
+
+procedure next2() modifies payload_stage1_2, payload_stage2_3, payload_stage2_3bis, hist2, i2, state2, stall, was_stalled; {
+
+    case
+        state2 == 0: {
+            if (i2 >= N + 2) {
+                state2 = 1;
+            } else {
+                was_stalled = stall;
+
+                if (was_stalled) {
+                    stall = false;
+                } else {if (2 <= i2 < N + 1 && pixel[i2 - 1] == pixel[i2]) {
+                    stall = true;
+                }}
+
+                if (2 <= i2 && !was_stalled) {
+                    hist2[payload_stage2_3] = payload_stage2_3bis + 1;
+                }
+
+                if (1 <= i2 < N + 1 && !stall) {
+                    payload_stage2_3    = payload_stage1_2;
+                    payload_stage2_3bis = hist2[payload_stage1_2];
+                }
+
+                if (i2 < N && !stall) {
+                    payload_stage1_2 = pixel[i2];
+                }
+
+                if (!stall) {
+                    i2 = i2 + 1;
+                }
+            }
+        }
+    esac;
+}
+
+
+invariant valid_stuff: t >= 0 && 0 <= state1 <= 1 && 0 <= state2 <= 1 && 0 <= i1 <= t && 0 <= i2 <= t && (t <= N ==> i1 == t) &&
+                        (state1 == 1 ==> i1 >= N) && (state2 == 1 ==> i2 >= N + 2) && (t > N ==> state1 == 1) &&
+                        (t == 0 ==> hist1 == hist2);
+
+invariant goal: i1 + 2 == i2 ==> hist1 == hist2;
+//invariant dv : state1 == 1 && state2 == 1 ==> hist1 == hist2;
+//invariant induc: t > 2 && history(i1, 3) + 2 == old(i2) && history(hist1, 3) == old(hist2) && history(i1, 2) + 2 == i2 ==> history(hist1, 2) == hist2;
+
+
+
+control {
+    o = induction(10);
+    check;print_results;
+    o.print_cex(N, t, i1, i2, hist, hist1, hist2, pixel, stall, was_stalled, state1, state2, payload_stage1_2, payload_stage2_3, payload_stage2_3bis);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
