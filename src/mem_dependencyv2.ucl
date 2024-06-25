@@ -12,6 +12,7 @@ var i1, i2: integer;
 var state1, state2: integer;
 var t: integer;
 
+
 var hist: [integer]integer;
 
 init {
@@ -62,7 +63,7 @@ procedure next2() modifies payload_stage1_2, payload_stage2_3, payload_stage2_3b
 
                 if (was_stalled) {
                     stall = false;
-                } else {if (2 <= i2 < N + 1 && pixel[i2 - 1] == pixel[i2]) {
+                } else {if (2 <= i2 < N + 1 && pixel[i2 - 2] == pixel[i2 - 1]) {
                     stall = true;
                 }}
 
@@ -92,14 +93,12 @@ invariant valid_stuff: t >= 0 && 0 <= state1 <= 1 && 0 <= state2 <= 1 && 0 <= i1
                         (state1 == 1 ==> i1 >= N) && (state2 == 1 ==> i2 >= N + 2) && (t > N ==> state1 == 1) &&
                         (t == 0 ==> hist1 == hist2);
 
-invariant goal: i1 + 2 == i2 ==> hist1 == hist2;
-//invariant dv : state1 == 1 && state2 == 1 ==> hist1 == hist2;
-//invariant induc: t > 2 && history(i1, 3) + 2 == old(i2) && history(hist1, 3) == old(hist2) && history(i1, 2) + 2 == i2 ==> history(hist1, 2) == hist2;
+invariant induc: t > 2 && history(i1, 3) + 2 == old(i2) && history(hist1, 3) == old(hist2) && history(i1, 2) + 2 == i2 ==> history(hist1, 2) == hist2;
 
 
 
 control {
-    o = induction(10);
+    o = induction(6);
     check;print_results;
     o.print_cex(N, t, i1, i2, hist, hist1, hist2, pixel, stall, was_stalled, state1, state2, payload_stage1_2, payload_stage2_3, payload_stage2_3bis);
 }

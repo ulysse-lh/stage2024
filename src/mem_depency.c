@@ -65,7 +65,7 @@ static bool was_stalled = false;
 
         if (was_stalled)
             stall = false;
-        else if (2 <= i && i < N + 1 && pixel[i - 1] == pixel[i])
+        else if (2 <= i && i < N + 1 && pixel[i - 2] == pixel[i - 1])
             stall = true;
 
 
