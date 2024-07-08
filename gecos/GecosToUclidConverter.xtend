@@ -130,7 +130,7 @@ class GecosToUclidConverter {
 				throw new UnsupportedOperationException("Internal calls not supported " + call);
 			}
 		} else {
-			if (psym.name=="printf") null
+			if (psym.name=="printf") "some printf leftover"
 			else call.address.convertInstr + "(" + call.args.toString(",") + ")"
 		}
 	}
@@ -139,7 +139,7 @@ class GecosToUclidConverter {
 		val src = i.source
 		if (src instanceof CallInstruction) {
 			val psym = src.procedureSymbol
-			if (psym.procedure !== null && !psym.uninterpreted) {
+			if (/*psym.procedure !== null &&*/ !psym.uninterpreted) {
 				if (!(psym.functionType.returnType instanceof VoidType)) {
 					return "call (" + i.dest.convertInstr + ") = " + src.address.convertInstr + "(" +
 						src.args.toString(",") + ")"
@@ -330,13 +330,19 @@ class GecosToUclidConverter {
 				«FOR s:EMFUtils.eAllContentsInstancesOf(proc.body, Symbol).reject(ProcedureSymbol)»
 				«declare(s)»
 				«ENDFOR»
+				«FOR decl : argsDecl»
+					var «decl»;
+				«ENDFOR»
+				«FOR param : proc.listParameters»
+					«param.name» = «param.name»_arg;
+				«ENDFOR»
 				«convertBlock(proc.body)»
 			}
 		'''
 
 		val sideffects = if(extRefs.empty) "" else '''modifies «extRefs.map[it.name].toString(",")»;'''
 		return '''
-			procedure «proc.symbol.name»(«argsDecl.toString(",")») «if (!(funType.returnType instanceof VoidType)) {'''returns ( ret_«proc.symbolName» : «typeName(funType.returnType)») 
+			procedure «proc.symbol.name»(«proc.listParameters.map[correctIdentifier(it.name) + "_arg: " + typeName(it.type)].toString(",")») «if (!(funType.returnType instanceof VoidType)) {'''returns ( ret_«proc.symbolName» : «typeName(funType.returnType)») 
 			'''
 		} else {
 			""
@@ -346,7 +352,6 @@ class GecosToUclidConverter {
 	}
 
 	def static dispatch String typeName(Type type) {
-		System.out.println(type+"; "+type.class)
 		"//Unsupported type " + type//throw new UnsupportedOperationException("Unsupported typeName() for " + type)
 	}
 	
@@ -449,7 +454,7 @@ class GecosToUclidConverter {
 			val returnType = (s.type as FunctionType).returnType
 			if (!(returnType instanceof VoidType)) {
 				'''function «s.name»(«args.toString(",")») : «typeName(returnType)»;'''
-			}
+			} else ""
 		} else {
 			convert(s.procedure)
 		}
@@ -485,7 +490,89 @@ class GecosToUclidConverter {
 	}
 
 	def static convert(GecosSourceFile src) {
-		'''
+		
+		var typesEncountered = <String>newHashSet()
+		var miscEncountered = <String>newHashSet()
+		var procEncountered = <String>newHashSet()
+		
+		var res = new StringBuffer("module main{\n\n")
+		
+		for (t : src.types) {
+			if (!typesEncountered.contains(t.typeName)) {
+				typesEncountered.add(t.typeName)
+				res.append('\t').append(t.declareType).append('\n')
+			}
+		}
+		
+		for (s : src.symbols.reject(ProcedureSymbol)) {
+			if (!miscEncountered.contains(s.name)) {
+				miscEncountered.add(s.name)
+				res.append('\t').append(s.declare).append('\n')
+			}
+		}
+		
+		for (p : src.symbols.filter(ProcedureSymbol).reject[name == "main"].reject[isTopLevel]) {
+			System.out.println(p.name)
+			if (
+				(p.procedure === null || p.uninterpreted) &&
+				!src.symbols
+					.filter(ProcedureSymbol)
+					.filter[name == p.name]
+					.filter[procedure !== null]
+					.filter[!uninterpreted]
+					.empty
+					)
+					{
+					}
+			
+			else if (!procEncountered.contains(p.name)) {
+				procEncountered.add(p.name)
+				res.append('\t').append(p.declare).append('\n')
+			}
+		}
+		
+		res.append(
+			'''
+			var t : integer;
+			var _finished123: boolean;
+			
+						init {
+							t =0;
+						«IF isTopLevelMode(src)»
+							«extractInitTopLevel(src)»
+						«ELSE»
+						«FOR s : src.symbols.filter(ProcedureSymbol).filter[name.startsWith("init_")]»
+							call «s.name»();
+						«ENDFOR»
+						«ENDIF»
+						}
+					
+						next {
+							t'= t +1;
+						«IF isTopLevelMode(src)»
+							«extractNextTopLevel(src)»
+						«ELSE»
+						«FOR s : src.symbols.filter(ProcedureSymbol).filter[name.startsWith("next_")]»
+							call «correctIdentifier(s.name)»();
+						«ENDFOR»
+						«ENDIF»
+						}
+			
+						«extractInvariants(src)»
+					
+						control {
+							«extractInductionDept(src)»;
+							check;
+							print_results;
+					 		«extractCEX(src)»
+						}
+						}
+			'''
+		)
+		return res.toString()
+		
+		
+		/*'''
 		module main {
 		
 			«FOR s : src.types»
@@ -500,7 +587,10 @@ class GecosToUclidConverter {
 			«ENDIF»
 		
 			«FOR s : src.symbols.filter(ProcedureSymbol).reject[name=="main"].reject[isTopLevel]»
+				«IF (s.procedure === null || s.uninterpreted) 
+					&& !src.symbols.filter(ProcedureSymbol).filter[name == s.name].empty»
 				«s.declare»
+				«ENDIF»
 			«ENDFOR»
 			
 			var t : integer;
@@ -536,7 +626,7 @@ class GecosToUclidConverter {
 			}
 			
 		}
-		'''
+		'''*/
 	}
 	
 	def static correctIdentifier(String s) {
@@ -614,9 +704,9 @@ class GecosToUclidConverter {
 		
 			'''
 					if («convertInstr((whyle.testBlock as BasicBlock).instructions.head)») {
-						_finished123 = true;
+						_finished123' = true;
 					}
-					if (!_finished123) {
+					if (!_finished123') {
 						«convertBlock(whyle.bodyBlock)»
 					}
 			'''
@@ -625,9 +715,9 @@ class GecosToUclidConverter {
 		
 			'''
 					if (!(«convertInstr((whyle.testBlock as BasicBlock).instructions.head)»)) {
-						_finished123 = true;
+						_finished123' = true;
 					}
-					if (!_finished123) {
+					if (!_finished123') {
 						«convertBlock(whyle.bodyBlock)»
 					}
 			'''
