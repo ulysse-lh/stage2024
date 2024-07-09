@@ -32,7 +32,7 @@ Assets:
 
 ### Observations
 
-`uclid uclid_behaviour_imperative.ucl` and `uclid uclid_behaviour_semi_functional.ucl` both succeed at reaching the goal. However, `uclid_behaviour_functional.ucl` fails at the two last induction steps. Increasing its induction depth to 20 does not change anything. For this specific case, making it succeed is pretty simple since the counter-example found by UCLID involves `state` being equal to garbage value like 25 (which never happens), so by adding `0 <= state2 <= 2` to the invariant `valid_stuff`, we finally complete the goal for `uclid_behaviour_functional.ucl`.
+`uclid uclid_behaviour_imperative.ucl` and `uclid uclid_behaviour_semi_functional.ucl` both succeed at reaching the goal. However, `uclid uclid_behaviour_functional.ucl` fails at the two last induction steps. Increasing its induction depth to 20 does not change anything. For this specific case, making it succeed is pretty simple since the counter-example found by UCLID involves `state` being equal to garbage value like 25 (which never happens), so by adding `0 <= state2 <= 2` to the invariant `valid_stuff`, we finally complete the goal for `uclid_behaviour_functional.ucl`.
 
 In conclusion, to be clear, `0 <= state2 <= 2` is **not** required to prove `uclid_behaviour_imperative.ucl` and `uclid_behaviour_semi_functional.ucl` while it **is** for `uclid_behaviour_functional.ucl`.
 
