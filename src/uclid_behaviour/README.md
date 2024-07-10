@@ -39,3 +39,20 @@ In conclusion, to be clear, `0 <= state2 <= 2` is **not** required to prove `ucl
 ### Conclusion
 
 This little experiment tends to indicate that UCLID has great trouble dealing with variable assignation in complex execution path (i.e. 2+ levels of branching).
+
+## Fixed-size arithmetic
+
+Asset:
+
+- `arith.ucl` contains several assertions that **should all pass** for any C-like language featuring round-down integer division, comparison and modulo operation. The assertions are only studied for bit-vectors of length 3 (\[0-7\]).
+
+### Observations
+
+1. Comparison is broken: `4 > 0`, `5 > 0`, `6 > 0` and `7 > 0` fail where they should obviously succeed.
+2. Division is broken: `6 / 7` yields `2` while `7 / 6` yields `0`.
+3. Modulo is broken: While `4 % 2` and `6 % 2` both yields `0`, `5 % 2` and `7 % 2` yields `7`. Since `7 = -1 mod 8`, it could be reasonable to say that UCLID computes modulo negatively (`5 = 1 mod 2 <=> 5 = -1 mod 2 <=> 5 = 7 mod 8 mod 2` and respectively for `7` instead of `5`). **However**, this is **not** the case since `7 % 5` still yields `7` when it should be `2` (and `7 != 2 mod 8`).
+4. Addition, substraction and multiplication seems to be working fine.
+
+### Conclusion
+
+Translating C code into UCLID may prove more challenging than expected.
