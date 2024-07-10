@@ -1,0 +1,80 @@
+module main {
+
+var m, n, o, p: bv3;
+var t: integer;
+
+var i1_dbg, i2_dbg, i3_dbg, i4_dbg, i5_dbg, i6_dbg,i7_dbg, i8_dbg, i9_dbg,
+    i10_dbg, i11_dbg, i12_dbg, i13_dbg, i14_dbg, i15_dbg, i16_dbg, i17_dbg, i18_dbg, i19_dbg,
+    i20_dbg, i21_dbg, i22_dbg: bv3;
+
+init{
+    t = 0;
+    havoc m;
+    havoc n;
+    havoc o;
+    havoc p;
+    i1_dbg = n + o;
+    i2_dbg = m / m;
+    i3_dbg = if (1bv3 > 0bv3) then 1bv3 else 0bv3;
+    i4_dbg = if (2bv3 > 0bv3) then 1bv3 else 0bv3;
+    i5_dbg = if (3bv3 > 0bv3) then 1bv3 else 0bv3;
+    i6_dbg = if (4bv3 > 0bv3) then 1bv3 else 0bv3;
+    i7_dbg = if (5bv3 > 0bv3) then 1bv3 else 0bv3;
+    i8_dbg = if (6bv3 > 0bv3) then 1bv3 else 0bv3;
+    i9_dbg = if (7bv3 > 0bv3) then 1bv3 else 0bv3;
+    i10_dbg = 6bv3 / 7bv3;
+    i11_dbg = 7bv3 / 6bv3;
+    i12_dbg = 4bv3 * 2bv3;
+    i13_dbg = 7bv3 * 7bv3;
+    i14_dbg = n % 2bv3;
+    i15_dbg = 4bv3 % 2bv3;
+    i16_dbg = 5bv3 % 2bv3;
+    i17_dbg = 6bv3 % 2bv3;
+    i18_dbg = 7bv3 % 2bv3;
+    i19_dbg = 7bv3 % 2bv3;
+    i20_dbg = 5bv3 % 2bv3;
+    i21_dbg = if (n > n) then 1bv3 else 0bv3;
+    i22_dbg = 7bv3 % 5bv3;
+}
+next{
+    t' = t + 1;
+}
+
+
+
+
+invariant valid_stuff: t >= 0;
+
+
+invariant i1: ((n + o == p) <==> (p - o == n)) && (n + o == o + n) && (n + n == 2bv3 * n) && (n - n == 0bv3); // O
+invariant i2: m != 0bv3 ==> (m / m) == 1bv3; // O
+invariant i3: 1bv3 > 0bv3; // O
+invariant i4: 2bv3 > 0bv3; // O
+invariant i5: 3bv3 > 0bv3; // O
+invariant i6: 4bv3 > 0bv3; // X
+invariant i7: 5bv3 > 0bv3; // X
+invariant i8: 6bv3 > 0bv3; // X
+invariant i9: 7bv3 > 0bv3; // X
+invariant i10: (6bv3 / 7bv3) == 0bv3; // X, i10_dbg = 2
+invariant i11: (7bv3 / 6bv3) == 1bv3; // X, i11_dbg = 0
+invariant i12: (4bv3 * 2bv3) == 0bv3; // O
+invariant i13: (7bv3 * 7bv3) == 1bv3; // O
+invariant i14: ((n % 2bv3) == 0bv3) || ((n % 2bv3) == 1bv3); // X
+invariant i15: (4bv3 % 2bv3) == 0bv3; // O
+invariant i16: (5bv3 % 2bv3) == 1bv3; // X, i16_dbg = 7
+invariant i17: (6bv3 % 2bv3) == 0bv3; // O
+invariant i18: (7bv3 % 2bv3) == 1bv3; // X, i18_dbg = 7
+invariant i19: (7bv3 % 2bv3) == -1bv3; // O
+invariant i20: (5bv3 % 2bv3) == -1bv3; // O
+invariant i21: n > n; // X (expected behaviour)
+invariant i22: (7bv3 % 5bv3) == 2bv3; // i22_dbg = 7
+
+
+
+control {
+    o = induction;
+    check;print_results;
+    o.print_cex;
+}
+
+}
