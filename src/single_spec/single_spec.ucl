@@ -1,0 +1,550 @@
+
+// Struct names
+                struct SCC_14_out_0 {
+                    p0_guard: boolean,
+                    int p1;
+                    p2: boolean,
+                    p3: boolean,
+                    p4: boolean
+                };
+
+                struct SCC_14_to_SpecSCC_10_out {
+                    write: boolean,
+                    struct SCC_14_out_0 data;
+                };
+
+                struct SpecSCC_10_out_0 {
+                    int p0,
+                    p1: boolean,
+                    p2: boolean,
+                    p3: boolean,
+                    int p4;
+                };
+
+                struct SpecSCC_10_to_SCC_15_out {
+                    write: boolean,
+                    struct SpecSCC_10_out_0 data;
+                };
+
+                struct fifo_SCC_14_to_SpecSCC_10 {
+                    struct SCC_14_out_0 data_out;
+                    empty: boolean
+                };
+
+                struct fifo_SpecSCC_10_to_SCC_15 {
+                    struct SpecSCC_10_out_0 data_out;
+                    empty: boolean
+                };
+
+                type fsm_cmd_x = record {
+                    nextInput: bv1,
+                    commit: bv1,
+                    muRollBack: bv3,
+                    arrayRollBack: bv32,
+                    rewind: bv32,
+                    rbwe: bv1,
+                    gammaRollBack_x: bv32,
+                    startStall_x: bv1,
+                    selSlowPath_x: bv32
+                };
+
+                type fsm_mispec_in_x = record {
+                    x: bv32
+                };
+
+                type statex = record {
+                    state: integer,
+                    rewindCpt: bv2,
+                    delayed_commit_0: bv1,
+delayed_commit_1: bv1,
+delayed_commit_2: bv1,
+array_rollback: bv32,
+mu_rollback: bv3,
+rewind: bv32,
+rbwe: bv1,
+commit_x: bv1,
+selSlowPath_x: bv32,
+rollback_x: bv32,
+startStall_x: bv1,
+rewindDepth: bv32,
+slowPath_x: bv32
+                };
+
+
+type Dummy = record {dummy: integer};
+
+function fsm_x_command(cs: statex): fsm_cmd_x;
+function SpecSCC_10_SCC_15_empty(): boolean;
+function SpecSCC_10_SCC_15_peek(): SpecSCC_10_out_0;
+function SpecSCC_10_SCC_15_read(): Dummy;
+
+function SCC_14_SpecSCC_10_empty(): boolean;
+function SCC_14_SpecSCC_10_full(): boolean;
+function SCC_14_SpecSCC_10_read(): Dummy;
+
+function SpecSCC_10_SCC_15_full(): boolean;
+function SCC_14_SpecSCC_10_peek(): SCC_14_out_0;
+
+function rollBack_SpecSCC_10_28_x_mu(x_in: bv32, offset: bv3, nextInput: bv1): bv32;
+function fsm_x_next(mispec: fsm_mispec_in_x, cs: statex): statex;
+
+
+int i;
+
+var ccycles: integer;
+int _SpecSCC_10_dline3_1_dline_0;
+int _SpecSCC_10_dline3_1_dline_1;
+int _SpecSCC_10_dline3_1_dline_2;
+bool _SpecSCC_10_dline2_2_dline_0;
+bool _SpecSCC_10_dline2_2_dline_1;
+struct statex _SpecSCC_10_dline1_3_dline_0;
+var SpecSCC_10_nextInput: bv1;
+var SpecSCC_10_commit: bv1;
+var SpecSCC_10_muRollback: bv3;
+var SpecSCC_10_rewind: bv32;
+var SpecSCC_10_rbwe: bv1;
+var SpecSCC_10_selSlowPath_x: bv32;
+int _SpecSCC_10_dline3_4_dline_0;
+int _SpecSCC_10_dline3_4_dline_1;
+int _SpecSCC_10_dline3_4_dline_2;
+bool _SpecSCC_10_dline3_5_dline_0;
+bool _SpecSCC_10_dline3_5_dline_1;
+bool _SpecSCC_10_dline3_5_dline_2;
+bool _SpecSCC_10_dline3_6_dline_0;
+bool _SpecSCC_10_dline3_6_dline_1;
+bool _SpecSCC_10_dline3_6_dline_2;
+bool _SpecSCC_10_dline3_7_dline_0;
+bool _SpecSCC_10_dline3_7_dline_1;
+bool _SpecSCC_10_dline3_7_dline_2;
+int _SpecSCC_10_dline3_8_dline_0;
+int _SpecSCC_10_dline3_8_dline_1;
+int _SpecSCC_10_dline3_8_dline_2;
+var loop_s: boolean;
+var start_s: boolean;
+
+
+function slow(x: bv32): bv32;
+function fast(x: bv32): bv32;
+function mispec(x: bv32): boolean;
+
+/*
+unsigned int next(int lfsr) {
+            {
+
+                #pragma HLS INLINE on
+                int _bit;
+
+                _bit = 0u;
+                _bit = (lfsr >> 0u ^ lfsr >> 2u ^ lfsr >> 3u ^ lfsr >> 5u) & 1u;
+                lfsr = lfsr >> 1 | _bit << 15;
+                return lfsr;
+            }
+            }
+
+int slow(int x) {
+
+            #pragma SHLS LATENCY min=5 max=5
+
+            #pragma HLS INLINE off
+            {
+                return x % (1 << 15) * (x % (1 << 15));
+            }
+            }
+
+int fast(int x) {
+            {
+                return x + 1;
+            }
+            }
+
+bool mispec(int x) {
+
+            #pragma SHLS LATENCY min=3 max=3
+
+            #pragma HLS INLINE off
+            {
+                return (next(x) + 1 & 0x3) == 0;
+            }
+            }
+*/
+
+procedure fsm_mispec_in_x_value_0(p_0: bv32) returns (res: fsm_mispec_in_x) {
+
+                res.x = p_0;
+            }
+
+struct SpecSCC_10_out_0 SpecSCC_10_out_0_value_1(int p_0, bool p_1, bool p_2, bool p_3, int p_4) {
+            {
+                struct SpecSCC_10_out_0 res;
+
+                res.p0 = p_0;
+                res.p1 = p_1;
+                res.p2 = p_2;
+                res.p3 = p_3;
+                res.p4 = p_4;
+                return res;
+            }
+            }
+
+struct SpecSCC_10_to_SCC_15_out SpecSCC_10_to_SCC_15_out_value_2(bool p_0, struct SpecSCC_10_out_0 p_1) {
+            {
+                struct SpecSCC_10_to_SCC_15_out res;
+
+                res.write = p_0;
+                res.data = p_1;
+                return res;
+            }
+            }
+
+struct SCC_14_out_0 SCC_14_out_0_value_3(bool p_0, int p_1, bool p_2, bool p_3, bool p_4) {
+            {
+                struct SCC_14_out_0 res;
+
+                res.p0_guard = p_0;
+                res.p1 = p_1;
+                res.p2 = p_2;
+                res.p3 = p_3;
+                res.p4 = p_4;
+                return res;
+            }
+            }
+
+struct SCC_14_to_SpecSCC_10_out SCC_14_to_SpecSCC_10_out_value_4(bool p_0, struct SCC_14_out_0 p_1) {
+            {
+                struct SCC_14_to_SpecSCC_10_out res;
+
+                res.write = p_0;
+                res.data = p_1;
+                return res;
+            }
+            }
+
+                var x: bv32;
+                bool guard;
+                var cmd: fsm_cmd_x;
+                bool _guard_0;
+                int _i_1;
+                struct SCC_14_to_SpecSCC_10_out SCC_14_out_0_var;
+                var SpecSCC_10_in_0: SCC_14_out_0;
+                var _SpecSCC_10_dline3_1_pop_0: bv32;
+                var _SpecSCC_10_dline2_2_pop_1: boolean;
+                var _SpecSCC_10_dline1_3_pop_2: statex;
+                var _SpecSCC_10_dline3_4_pop_3: bv32;
+                var _SpecSCC_10_dline3_5_pop_4: boolean;
+                var _SpecSCC_10_dline3_6_pop_5: boolean;
+                var _SpecSCC_10_dline3_7_pop_6: boolean;
+                var _SpecSCC_10_dline3_8_pop_7: bv32;
+                var _rollBack_SpecSCC_10_28_x_mu_8: bv32;
+                var _x_9: bv32;
+                var SpecSCC_10_mu_x_10: bv32;
+                var _fsm_x_next_11: statex;
+                bool _mispec_12;
+                int _slow_13;
+                int _fast_14;
+                bool _rewind_SpecSCC_10_34_15;
+                bool _rewind_SpecSCC_10_35_16;
+                int _rewind_SpecSCC_10_37_17;
+                bool _rewind_SpecSCC_10_39_18;
+                bool _rewind_SpecSCC_10_41_19;
+                struct SpecSCC_10_to_SCC_15_out SpecSCC_10_out_0_var;
+                struct SpecSCC_10_out_0 SCC_15_in_0;
+
+                var statex_init_fsmx: statex;
+                var finished123: boolean;
+init {
+finished123 = false;
+                x = 0x12345678bv32;
+                guard = true;
+                call (statex_init_fsmx) = init_fsmx();
+                call SpecSCC_10_dline1_3_init(statex_init_fsmx);
+                start_s = true;
+                loop_s = true;
+                ccycles = -1;
+}
+
+next {
+
+    if ( !finished123 && !loop_s ) {
+        finished123 = true;
+    }
+    if ( !finished123 ) {
+
+
+                        ccycles = ccycles + 1;
+                        if ( !SpecSCC_10_SCC_15_empty() ) {
+                            SCC_15_in_0 = SpecSCC_10_SCC_15_peek();
+                            loop_s = SCC_15_in_0.p1;
+
+                            SpecSCC_10_SCC_15_read();
+                        }
+                        if ((!SCC_14_SpecSCC_10_empty()) && (!SpecSCC_10_SCC_15_full())) {
+                            SpecSCC_10_in_0 = SCC_14_SpecSCC_10_peek();
+
+                            call (_SpecSCC_10_dline3_1_pop_0) = SpecSCC_10_dline3_1_pop(true);
+
+                            call (_SpecSCC_10_dline2_2_pop_1) = SpecSCC_10_dline2_2_pop(true);
+                            call (_SpecSCC_10_dline1_3_pop_2) = SpecSCC_10_dline1_3_pop(true);
+                            cmd = fsm_x_command(_SpecSCC_10_dline1_3_pop_2);
+                            SpecSCC_10_nextInput = cmd.nextInput;
+                            SpecSCC_10_commit = cmd.commit;
+                            SpecSCC_10_muRollback = cmd.muRollBack;
+                            SpecSCC_10_rewind = cmd.rewind;
+                            SpecSCC_10_rbwe = cmd.rbwe;
+                            SpecSCC_10_selSlowPath_x = cmd.selSlowPath_x;
+                            call (_SpecSCC_10_dline3_4_pop_3) = SpecSCC_10_dline3_4_pop(true);
+                            call (_SpecSCC_10_dline3_5_pop_4) = SpecSCC_10_dline3_5_pop(true);
+                            call (_SpecSCC_10_dline3_6_pop_5) = SpecSCC_10_dline3_6_pop(true);
+                            call (_SpecSCC_10_dline3_7_pop_6) = SpecSCC_10_dline3_7_pop(true);
+                            call (_SpecSCC_10_dline3_8_pop_7) = SpecSCC_10_dline3_8_pop(true);
+
+                            SpecSCC_10_mu_x_10 = x;
+
+                            _rollBack_SpecSCC_10_28_x_mu_8 = rollBack_SpecSCC_10_28_x_mu(SpecSCC_10_mu_x_10, SpecSCC_10_muRollback, SpecSCC_10_rbwe);
+
+                            _fsm_x_next_11 = fsm_x_next(fsm_mispec_in_x_value_0((signed int)(_SpecSCC_10_dline2_2_pop_1)), _SpecSCC_10_dline1_3_pop_2);
+
+                            SpecSCC_10_dline1_3_push((struct statex)(_fsm_x_next_11), 1);
+                            _mispec_12 = mispec(_rollBack_SpecSCC_10_28_x_mu_8);
+                            SpecSCC_10_dline2_2_push(_mispec_12, 1);
+                            _slow_13 = slow(_rollBack_SpecSCC_10_28_x_mu_8);
+                            SpecSCC_10_dline3_1_push(_slow_13, 1);
+                            _fast_14 = fast(_rollBack_SpecSCC_10_28_x_mu_8);
+                            _x_9 = SpecSCC_10_selSlowPath_x ? _SpecSCC_10_dline3_1_pop_0 : _fast_14;
+                            SpecSCC_10_dline3_4_push(_x_9, 1);
+                            _rewind_SpecSCC_10_34_15 = rewind_SpecSCC_10_34(SpecSCC_10_in_0.p2, SpecSCC_10_rewind, SpecSCC_10_nextInput);
+                            x = _rewind_SpecSCC_10_34_15 ? _x_9 : _rollBack_SpecSCC_10_28_x_mu_8;
+                            _rewind_SpecSCC_10_35_16 = rewind_SpecSCC_10_35(SpecSCC_10_in_0.p0_guard, SpecSCC_10_rewind, SpecSCC_10_nextInput);
+                            SpecSCC_10_dline3_5_push(_rewind_SpecSCC_10_35_16, 1);
+                            _rewind_SpecSCC_10_37_17 = rewind_SpecSCC_10_37(SpecSCC_10_in_0.p1, SpecSCC_10_rewind, SpecSCC_10_nextInput);
+                            SpecSCC_10_dline3_8_push(_rewind_SpecSCC_10_37_17, 1);
+                            _rewind_SpecSCC_10_39_18 = rewind_SpecSCC_10_39(SpecSCC_10_in_0.p3, SpecSCC_10_rewind, SpecSCC_10_nextInput);
+                            SpecSCC_10_dline3_6_push(_rewind_SpecSCC_10_39_18, 1);
+                            _rewind_SpecSCC_10_41_19 = rewind_SpecSCC_10_41(SpecSCC_10_in_0.p4, SpecSCC_10_rewind, SpecSCC_10_nextInput);
+                            SpecSCC_10_dline3_7_push(_rewind_SpecSCC_10_41_19, 1);
+                            SpecSCC_10_out_0_var = SpecSCC_10_to_SCC_15_out_value_2(SpecSCC_10_commit, SpecSCC_10_out_0_value_1(_SpecSCC_10_dline3_4_pop_3, _SpecSCC_10_dline3_5_pop_4, _SpecSCC_10_dline3_6_pop_5, _SpecSCC_10_dline3_7_pop_6, _SpecSCC_10_dline3_8_pop_7));
+                            SpecSCC_10_SCC_15_write(SpecSCC_10_out_0_var);
+                            if (cmd.nextInput)
+                                SCC_14_SpecSCC_10_read();
+                        }
+                        if (!SCC_14_SpecSCC_10_full()) {
+                            _guard_0 = guard;
+                            _i_1 = i;
+                            i = _guard_0 ? _i_1 + 1 : _i_1;
+                            guard = i < 1024;
+                            SCC_14_out_0_var = SCC_14_to_SpecSCC_10_out_value_4(1, SCC_14_out_0_value_3(guard, _i_1, _guard_0, _guard_0, _guard_0));
+                            SCC_14_SpecSCC_10_write(SCC_14_out_0_var);
+                        }
+                        start_s = false;
+
+                }
+            }
+
+int get_ticks() {
+            {
+                return ccycles;
+            }
+            }
+
+int get_trip_count() {
+            {
+                return i;
+            }
+            }
+
+void dump_perf() {
+            {
+                int t;
+                FILE * f;
+
+                f = fopen("perf.txt", "w");
+                i = get_trip_count();
+                t = get_ticks();
+                fprintf(f, "trip count=%d\nclock cycles=%d\nCPI=%f", i, t, t / (float)(i));
+                fclose(f);
+                f = fopen("perf.json", "w");
+                i = get_trip_count();
+                t = get_ticks();
+                fprintf(f, "{\n", i, t, t / (float)(i));
+                fprintf(f, "\t\"TripCount\":\"%d\",\n", i);
+                fprintf(f, "\t\"ClockCycles\":\"%d\"\n,", t);
+                fprintf(f, "\t\"ClockPerIteration\":\"%f\"\n}", t / (float)(i));
+                fclose(f);
+            }
+            }
+
+
+procedure statex_value_5(
+    p_0: integer,
+    p_1: bv2,
+    p_2: bv1,
+    p_3: bv1,
+    p_4: bv1,
+    p_5: bv32,
+    p_6: bv32,
+    p_7: bv32,
+    p_8: bv1,
+    p_9: bv1,
+    p_10: bv32,
+    p_11: bv32,
+    p_12: bv1,
+    p_13: bv32,
+    p_14: bv32
+) returns (res: statex) {
+
+
+                res.state = p_0;
+                res.rewindCpt = p_1;
+                res.delayed_commit_0 = p_2;
+                res.delayed_commit_1 = p_3;
+                res.delayed_commit_2 = p_4;
+                res.array_rollback = p_5;
+                res.mu_rollback = p_6;
+                res.rewind = p_7;
+                res.rbwe = p_8;
+                res.commit_x = p_9;
+                res.selSlowPath_x = p_10;
+                res.rollback_x = p_11;
+                res.startStall_x = p_12;
+                res.rewindDepth = p_13;
+                res.slowPath_x = p_14;
+                return res;
+
+            }
+
+procedure init_fsmx() returns (res: statex) {
+
+    call (res) = statex_value_5(4, 0bv2, 0bv1, 0bv1, 0bv1, 0bv32, 0bv32, 0bv32, 1bv1, 0bv1, 0bv32, 0bv32, 0bv1, 0bv32, 0bv32);
+
+}
+
+void SpecSCC_10_dline3_1_push(int data_in, bool push_enable) {
+            {
+                if (push_enable) {
+                    _SpecSCC_10_dline3_1_dline_2 = _SpecSCC_10_dline3_1_dline_1;
+                    _SpecSCC_10_dline3_1_dline_1 = _SpecSCC_10_dline3_1_dline_0;
+                    _SpecSCC_10_dline3_1_dline_0 = data_in;
+                }
+            }
+            }
+
+procedure SpecSCC_10_dline3_1_pop(pop_enable: boolean) returns (res: bv32) {
+
+                res = _SpecSCC_10_dline3_1_dline_2;
+
+            }
+
+void SpecSCC_10_dline2_2_push(bool data_in, bool push_enable) {
+            {
+                if (push_enable) {
+                    _SpecSCC_10_dline2_2_dline_1 = _SpecSCC_10_dline2_2_dline_0;
+                    _SpecSCC_10_dline2_2_dline_0 = data_in;
+                }
+            }
+            }
+
+procedure SpecSCC_10_dline2_2_pop(pop_enable: boolean) returns (res: boolean) {
+
+            res = _SpecSCC_10_dline2_2_dline_1;
+
+            }
+
+void SpecSCC_10_dline1_3_push(struct statex data_in, bool push_enable) {
+            {
+                if (push_enable) {
+                    _SpecSCC_10_dline1_3_dline_0 = data_in;
+                }
+            }
+            }
+
+procedure SpecSCC_10_dline1_3_pop(pop_enable: boolean) returns (res: statex) {
+
+                res = _SpecSCC_10_dline1_3_dline_0;
+
+            }
+
+void SpecSCC_10_dline1_3_init(struct statex data_in) {
+            {
+                _SpecSCC_10_dline1_3_dline_0 = data_in;
+            }
+            }
+
+void SpecSCC_10_dline3_4_push(int data_in, bool push_enable) {
+            {
+                if (push_enable) {
+                    _SpecSCC_10_dline3_4_dline_2 = _SpecSCC_10_dline3_4_dline_1;
+                    _SpecSCC_10_dline3_4_dline_1 = _SpecSCC_10_dline3_4_dline_0;
+                    _SpecSCC_10_dline3_4_dline_0 = data_in;
+                }
+            }
+            }
+
+procedure SpecSCC_10_dline3_4_pop(pop_enable: boolean) returns (res: bv32) {
+
+            res = _SpecSCC_10_dline3_4_dline_2;
+
+            }
+
+void SpecSCC_10_dline3_5_push(bool data_in, bool push_enable) {
+            {
+                if (push_enable) {
+                    _SpecSCC_10_dline3_5_dline_2 = _SpecSCC_10_dline3_5_dline_1;
+                    _SpecSCC_10_dline3_5_dline_1 = _SpecSCC_10_dline3_5_dline_0;
+                    _SpecSCC_10_dline3_5_dline_0 = data_in;
+                }
+            }
+            }
+
+procedure SpecSCC_10_dline3_5_pop(pop_enable: boolean) returns (res: boolean) {
+
+          res = _SpecSCC_10_dline3_5_dline_2;
+
+            }
+
+void SpecSCC_10_dline3_6_push(bool data_in, bool push_enable) {
+            {
+                if (push_enable) {
+                    _SpecSCC_10_dline3_6_dline_2 = _SpecSCC_10_dline3_6_dline_1;
+                    _SpecSCC_10_dline3_6_dline_1 = _SpecSCC_10_dline3_6_dline_0;
+                    _SpecSCC_10_dline3_6_dline_0 = data_in;
+                }
+            }
+            }
+
+
+procedure SpecSCC_10_dline3_6_pop(pop_enable: boolean) returns (res: boolean) {
+
+            res = _SpecSCC_10_dline3_6_dline_2;
+
+            }
+
+void SpecSCC_10_dline3_7_push(bool data_in, bool push_enable) {
+            {
+                if (push_enable) {
+                    _SpecSCC_10_dline3_7_dline_2 = _SpecSCC_10_dline3_7_dline_1;
+                    _SpecSCC_10_dline3_7_dline_1 = _SpecSCC_10_dline3_7_dline_0;
+                    _SpecSCC_10_dline3_7_dline_0 = data_in;
+                }
+            }
+            }
+
+procedure SpecSCC_10_dline3_7_pop(pop_enable: boolean) returns (res: boolean) {
+
+            res = _SpecSCC_10_dline3_7_dline_2;
+
+            }
+
+void SpecSCC_10_dline3_8_push(int data_in, bool push_enable) {
+            {
+                if (push_enable) {
+                    _SpecSCC_10_dline3_8_dline_2 = _SpecSCC_10_dline3_8_dline_1;
+                    _SpecSCC_10_dline3_8_dline_1 = _SpecSCC_10_dline3_8_dline_0;
+                    _SpecSCC_10_dline3_8_dline_0 = data_in;
+                }
+            }
+            }
+
+procedure SpecSCC_10_dline3_8_pop(pop_enable: boolean) returns (res: bv32) {
+
+           res = _SpecSCC_10_dline3_8_dline_2;
+
+            }
