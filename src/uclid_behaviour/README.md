@@ -56,3 +56,7 @@ Asset:
 ### Conclusion
 
 Translating C code into UCLID may prove more challenging than expected.
+
+### About bit-vectors length
+
+Using bit-vectors of length 32 instead of length 3 cleans most of the problems encountered before. However, UCLID still does not accept that `n % 2 == 0 || n % 2 == 1` holds, with length 3 and 32 alike.
