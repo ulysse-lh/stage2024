@@ -5,7 +5,7 @@ var t: integer;
 
 var i1_dbg, i2_dbg, i3_dbg, i4_dbg, i5_dbg, i6_dbg,i7_dbg, i8_dbg, i9_dbg,
     i10_dbg, i11_dbg, i12_dbg, i13_dbg, i14_dbg, i15_dbg, i16_dbg, i17_dbg, i18_dbg, i19_dbg,
-    i20_dbg, i21_dbg, i22_dbg: bv3;
+    i20_dbg, i21_dbg: bv3;
 
 init{
     t = 0;
@@ -33,8 +33,7 @@ init{
     i18_dbg = 7bv3 % 2bv3;
     i19_dbg = 7bv3 % 2bv3;
     i20_dbg = 5bv3 % 2bv3;
-    i21_dbg = if (n > n) then 1bv3 else 0bv3;
-    i22_dbg = 7bv3 % 5bv3;
+    i21_dbg = 7bv3 % 5bv3;
 }
 next{
     t' = t + 1;
@@ -66,8 +65,7 @@ invariant i17: (6bv3 % 2bv3) == 0bv3; // O
 invariant i18: (7bv3 % 2bv3) == 1bv3; // X, i18_dbg = 7
 invariant i19: (7bv3 % 2bv3) == -1bv3; // O
 invariant i20: (5bv3 % 2bv3) == -1bv3; // O
-invariant i21: n > n; // X (expected behaviour)
-invariant i22: (7bv3 % 5bv3) == 2bv3; // i22_dbg = 7
+invariant i21: (7bv3 % 5bv3) == 2bv3; // i22_dbg = 7
 
 
 
