@@ -48,6 +48,8 @@ Asset:
 
 ### Observations
 
+**Update**: All observations are actually expected with the C99 standard in mind and with bit-vectors being interpreted as signed. Nothing is "broken".
+
 1. Comparison is broken: `4 > 0`, `5 > 0`, `6 > 0` and `7 > 0` fail where they should obviously succeed.
 2. Division is broken: `6 / 7` yields `2` while `7 / 6` yields `0`.
 3. Modulo is broken: While `4 % 2` and `6 % 2` both yield `0`, `5 % 2` and `7 % 2` yield `7`. Since `7 = -1 mod 8`, it could be reasonable to say that UCLID computes modulo negatively (`5 = 1 mod 2 <=> 5 = -1 mod 2 <=> 5 = 7 mod 8 mod 2` and respectively for `7` instead of `5`). **However**, this is **not** the case since `7 % 5` still yields `7` when it should be `2` (and `7 != 2 mod 8`).
