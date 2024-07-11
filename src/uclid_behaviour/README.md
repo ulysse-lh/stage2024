@@ -19,7 +19,7 @@ Assets:
         ...
     ```
 
-    which can be seen as giving the outputs a sane default (remainder: garbage if not initialized), which can be overriden anytime in the `...`.
+    which can be seen as giving the outputs a sane default (reminder: garbage if not initialized), which can be overriden anytime in the `...`.
 - `uclid_behaviour_functional.ucl` contains a fully-functional version of `uclid_behaviour_semi_functional.ucl` in the sense that the outputs of `next2` are written to exactly once.
 - For each file, we are trying to prove the following invariants:
 
