@@ -732,8 +732,8 @@ void next_single_spec() {
 							_SpecSCC_10_dline3_7_pop_6 = SpecSCC_10_dline3_7_pop(true);
 							_SpecSCC_10_dline3_8_pop_7 = SpecSCC_10_dline3_8_pop(true);
 							SpecSCC_10_mu_x_10 = x;
-							//_rollBack_SpecSCC_10_28_x_mu_8 = rollBack_SpecSCC_10_28_x_mu(SpecSCC_10_mu_x_10, SpecSCC_10_muRollback, SpecSCC_10_rbwe);
-							_rollBack_SpecSCC_10_28_x_mu_8 = rollBack_SpecSCC_10_28_x_mu(0, (ac_int<3, false>)0, (ac_int<1, false>)0);
+							_rollBack_SpecSCC_10_28_x_mu_8 = rollBack_SpecSCC_10_28_x_mu(SpecSCC_10_mu_x_10, SpecSCC_10_muRollback, SpecSCC_10_rbwe);
+
 							_fsm_x_next_11 = fsm_x_next(
 									fsm_mispec_in_x_value_0(
 											_SpecSCC_10_dline2_2_pop_1 ? (ac_int<32, false>)1 : (ac_int<32, false>)0
