@@ -51,6 +51,8 @@ import gecos.types.OverflowMode
 import gecos.instrs.ConvertInstruction
 import gecos.types.ACIntType
 import gecos.types.AliasType
+import gecos.types.FloatType
+import java.util.Set
 
 class GecosToUclidConverter {
 
@@ -72,7 +74,8 @@ class GecosToUclidConverter {
 		if (!new File(outPath).exists) {
 			new File(outPath).mkdirs
 		}
-			val pstr = new PrintStream(new File(outPath+ File.separator+  procedure.containingProject.name +"_"+ procedure.symbolName+ ".ucl"))
+			val pstr = new PrintStream(new File(outPath+ File.separator+  procedure.containingProject.name +
+				"_"+ procedure.symbolName+ ".ucl"))
 			pstr.append(convert(procedure))
 			pstr.close
 	}
@@ -95,19 +98,29 @@ class GecosToUclidConverter {
 	}
 	
 	def static dispatch String convertInstr(ConvertInstruction i) {
-		//i.class.simpleName + "[" + i.listChildren.map[convertInstr] + "]"
+		if (i.listChildren.length != 1)
+			throw new RuntimeException("Casting multiple targets")
+		
+		val target = i.listChildren.first
+		if (i.type == target.type)
+			return convertInstr(target)
+		
+		if (i.type instanceof BoolType) {
+			if (target.type instanceof ACIntType) {
+				return '''«convertInstr(target)» == 0bv«(target.type as ACIntType).bitwidth»'''
+			}
+			if (target.type instanceof IntegerType) {
+				return '''«convertInstr(target)» == 0'''
+			}
+			
+		}
+		
 		if (i.type instanceof ACIntType) {
 			val bv = i.type as ACIntType
 			
-			if (i.listChildren.length != 1)
-				throw new Exception("Only constants are supported for ac_int.\nE.g., use"+
-									"abool ? (ap_int<2>)0 : (ap_int<2>)3\nrather than\n"+
-									"(ap_int<2>)(abool ? 0 : 3)"
-				)
-			
-			return convertInstr(i.listChildren.first) + "bv" + bv.bitwidth
+			return convertInstr(target) + "bv" + bv.bitwidth
 		}
-		"// No equivalent to casting in UCLID!"
+		throw new RuntimeException("No equivalent to casting in UCLID")
 	}
 
 	def static dispatch String convertInstr(EnumeratorInstruction i) {
@@ -120,18 +133,31 @@ class GecosToUclidConverter {
 
 
 	def static dispatch String convertInstr(CallInstruction call) {
-		val psym = call.procedureSymbol 
+		val psym = call.procedureSymbol
 		if (psym.isUninterpreted) {
-			call.address.convertInstr + "(" + call.args.toString(",") + ")"
+			call.address.convertInstr + "(" + call.args.map[convertInstr].toString(", ") + ")"
 		} else if (psym.procedure !== null) { 
 			if (psym.functionType.returnType instanceof VoidType) {
-				return "call " + call.address.convertInstr + "(" + call.args.toString(",") + ")"
+				return "call " + call.address.convertInstr + "(" + call.args.map[convertInstr].toString(", ") + ")"
 			} else {
-				throw new UnsupportedOperationException("Internal calls not supported " + call);
+				if (tempVariables.empty || tempCallStorage.empty)
+					return "failure"
+				
+				val variableName = "tmpvar_" + call.address.convertInstr + tempVariableCounter++
+				val variableType = call.address.type.asFunction.returnType
+				
+				tempVariables.getLast.add(variableName + ": " + typeName(variableType))
+				
+				tempCallStorage.getLast.add(
+					'''
+					call («variableName») = «call.address.convertInstr»(«call.args.map[convertInstr].toString(", ")»);
+					'''
+				)
+				return variableName
 			}
 		} else {
 			if (psym.name=="printf") "some printf leftover"
-			else call.address.convertInstr + "(" + call.args.toString(",") + ")"
+			else call.address.convertInstr + "(" + call.args.map[convertInstr].toString(", ") + ")"
 		}
 	}
 
@@ -139,10 +165,10 @@ class GecosToUclidConverter {
 		val src = i.source
 		if (src instanceof CallInstruction) {
 			val psym = src.procedureSymbol
-			if (/*psym.procedure !== null &&*/ !psym.uninterpreted) {
+			if (psym.procedure !== null && !psym.uninterpreted) {
 				if (!(psym.functionType.returnType instanceof VoidType)) {
 					return "call (" + i.dest.convertInstr + ") = " + src.address.convertInstr + "(" +
-						src.args.toString(",") + ")"
+						src.args.map[convertInstr].toString(", ") + ")"
 				} else {
 					throw new UnsupportedOperationException("NYI");
 				}
@@ -150,7 +176,6 @@ class GecosToUclidConverter {
 				i.dest.convertInstr+" = "+i.source.convertInstr
 			}
 		} else {
-			
 			i.dest.convertInstr + " = " + i.source.convertInstr
 		}
 	}
@@ -183,6 +208,8 @@ class GecosToUclidConverter {
 				"(" + convertInstr(i.children.get(0)) + " + " + convertInstr(i.children.get(1)) + ")"
 			case "sub":
 				"(" + convertInstr(i.children.get(0)) + " - " + convertInstr(i.children.get(1)) + ")"
+			case "neg":
+				"(-" + convertInstr(i.children.get(0)) + ")"
 			case "lt":
 				"(" + convertInstr(i.children.get(0)) + " < " + convertInstr(i.children.get(1)) + ")"
 			case "gt":
@@ -194,7 +221,8 @@ class GecosToUclidConverter {
 			case "neq":
 				"(" + convertInstr(i.children.get(0)) + " != " + convertInstr(i.children.get(1)) + ")"
 			case "mux":
-				"if (" + convertInstr(i.children.get(0)) + ") then " + convertInstr(i.children.get(1)) + " else " + convertInstr(i.children.get(2)) 
+				"if (" + convertInstr(i.children.get(0)) + ") then " + convertInstr(i.children.get(1)) +
+				" else " + convertInstr(i.children.get(2)) 
 			case "and":
 				"(" + convertInstr(i.children.get(0)) + " & " + convertInstr(i.children.get(1)) + ")"
 			case "or":
@@ -203,6 +231,8 @@ class GecosToUclidConverter {
 				"(" + convertInstr(i.children.get(0)) + " && " + convertInstr(i.children.get(1)) + ")"
 			case "lor":
 				"(" +convertInstr(i.children.get(0)) + " || " + convertInstr(i.children.get(1)) + ")"
+			case "lnot":
+				"(!" + convertInstr(i.children.get(0)) + ")"
 			default: {
 				i.name + "(" + i.children.map[convertInstr].reduce[p1, p2|p1+ "," +p2]+ ")"
 			}
@@ -211,7 +241,15 @@ class GecosToUclidConverter {
 	}
 
 	def static dispatch String convertInstr(RetInstruction i) {
-		if(i.expr === null) return "" else "ret_" + currentProc.symbolName + "=" + i.expr.convertInstr
+		if(i.expr === null) return "//"
+		
+		if (i.expr instanceof CallInstruction) {
+			val call = i.expr as CallInstruction
+			return "call (ret_" + correctIdentifier(currentProc.symbolName) + ") = " + call.address.convertInstr + "(" +
+						call.args.map[convertInstr].toString(",") + ")"
+						
+		}
+		return "ret_" + correctIdentifier(currentProc.symbolName) + " = " + i.expr.convertInstr
 	}
 
 	def static dispatch String convertInstr(SimpleArrayInstruction i) {
@@ -219,13 +257,24 @@ class GecosToUclidConverter {
 	}
 
 	def static dispatch String convertBlock(Block b) {
-		"// unsuported for " + b
-	// throw new UnsupportedOperationException("TODO: auto-generated method stub for "+b)
+		"// unsupported for " + b
 	}
 
 	def static dispatch String convertBlock(BasicBlock bb) {
-		if (bb.instructionCount !== 0)
-			bb.instructions.map[convertInstr].filterNull.reduce[a, b|a + ";\n" + b] + ";"
+		if (bb.instructionCount !== 0) {
+			
+			var tempCalls = new ArrayList<String>()
+			tempCallStorage.add(tempCalls)
+			
+			val res = bb.instructions.map[convertInstr].filterNull.reduce[a, b|a + ";\n" + b] + ";"
+			tempCallStorage.removeLast
+			return '''
+				«FOR st : tempCalls»
+				«st»
+				«ENDFOR»
+				«res»
+			'''
+		}
 		else
 			""
 	}
@@ -264,18 +313,23 @@ class GecosToUclidConverter {
 
 
 	def static dispatch String convertBlock(IfBlock b) {
+		var tempCalls = new ArrayList<String>()
+		tempCallStorage.add(tempCalls)
+		val cond = convertInstr((b.testBlock as BasicBlock).instructions.head)
+		tempCallStorage.removeLast
+		
 		'''
-			if («convertInstr((b.testBlock as BasicBlock).instructions.head)») {	
+			«FOR st : tempCalls»
+			«st»
+			«ENDFOR»
+			if («cond») {	
 				«convertBlock(b.thenBlock)» 
-			} «if (b.elseBlock!==null) {
-			'''
+			}
+			«IF b.elseBlock!==null»
 			else {
 				«convertBlock(b.elseBlock)»
 			}
-			'''
-			} else {
-			""
-		}»
+			«ENDIF»
 		'''
 	}
 
@@ -288,14 +342,30 @@ class GecosToUclidConverter {
 			}
 		'''
 	}
+	
+	static var List<List<String>> tempCallStorage = new ArrayList()
 
 	def static dispatch String convertBlock(DoWhileBlock b) {
+		var tempCalls = new ArrayList<String>()
+		tempCallStorage.add(tempCalls)
+		
+		val cond = convertInstr((b.testBlock as BasicBlock).instructions.head)
+		tempCallStorage.removeLast
+		val body = convertBlock(b.bodyBlock)
+		
+		
 		'''
 			{
-				«convertBlock(b.bodyBlock)»
+				«body»
 			}
-			while («convertInstr((b.testBlock as BasicBlock).instructions.head)») {
-				«convertBlock(b.bodyBlock)»
+			«FOR st : tempCalls»
+			«st»
+			«ENDFOR»
+			while («cond») {
+				«body»
+				«FOR st : tempCalls»
+				st;
+				«ENDFOR»
 			}
 		'''
 	}
@@ -317,16 +387,49 @@ class GecosToUclidConverter {
 					
 	}
 
+
+	// used to store variables to declare for internal procedure calls
+	static var List<Set<String>> tempVariables = new ArrayList()
+	static var int tempVariableCounter
+
 	def static convert(Procedure proc) {
 		val locals = EMFUtils.eAllContentsInstancesOf(proc.body, Symbol) + proc.listParameters;
 		val refs = EMFUtils.eAllContentsInstancesOf(proc.body, ISymbolUse);
 		val extRefs = refs.reject[locals.contains(usedSymbol)].map[usedSymbol].reject(ProcedureSymbol).toSet
+		val Set<Symbol> extRefsDeeper = refs
+								.reject[locals.contains(usedSymbol)]
+								.map[usedSymbol]
+								.filter(ProcedureSymbol)
+								.filter[p | p.procedure !== null]
+								.filter[!uninterpreted]
+								.map[
+									p | {
+										val locals1 = EMFUtils.eAllContentsInstancesOf(p.procedure.body, Symbol) +
+														 p.procedure.listParameters;
+										val refs1 = EMFUtils.eAllContentsInstancesOf(p.procedure.body, ISymbolUse)
+										
+										refs1
+											.reject[locals1.contains(usedSymbol)]
+											.map[usedSymbol]
+											.reject(ProcedureSymbol).toSet
+									}
+								]
+								.flatten
+								.toSet
+		if (proc.symbol.name.contains("single"))
+			System.out.println(extRefsDeeper)
+		val extRefsTotal = extRefs + extRefsDeeper
+		
 		val funType = proc.symbol.type as FunctionType
 		val argsDecl = proc.listParameters.map[correctIdentifier(it.name) + ":" + typeName(it.type)]
 
+		var temporaryVariables = newHashSet()
+		tempVariableCounter = 0
+		tempVariables.add(temporaryVariables)
+		
 		currentProc = proc
-		val body = '''
-			{
+		val body1 = '''
+			
 				«FOR s:EMFUtils.eAllContentsInstancesOf(proc.body, Symbol).reject(ProcedureSymbol)»
 				«declare(s)»
 				«ENDFOR»
@@ -334,20 +437,31 @@ class GecosToUclidConverter {
 					var «decl»;
 				«ENDFOR»
 				«FOR param : proc.listParameters»
-					«param.name» = «param.name»_arg;
+					«correctIdentifier(param.name)» = «correctIdentifier(param.name)»_arg;
 				«ENDFOR»
-				«convertBlock(proc.body)»
-			}
 		'''
+		val body2 = '''
+				«convertBlock(proc.body)»
+		'''
+		
+		val body = body1 + '''
+				«FOR v : temporaryVariables»
+					var «v»;
+				«ENDFOR»
+		''' + body2
+		
+		tempVariables.removeLast
 
-		val sideffects = if(extRefs.empty) "" else '''modifies «extRefs.map[it.name].toString(",")»;'''
+		val sideffects = if(extRefsTotal.empty) "" else '''modifies «extRefsTotal.map[it.name].toString(",")»;'''
 		return '''
-			procedure «proc.symbol.name»(«proc.listParameters.map[correctIdentifier(it.name) + "_arg: " + typeName(it.type)].toString(",")») «if (!(funType.returnType instanceof VoidType)) {'''returns ( ret_«proc.symbolName» : «typeName(funType.returnType)») 
+			procedure «correctIdentifier(proc.symbol.name)»(«proc.listParameters.map[correctIdentifier(it.name) + "_arg: " + typeName(it.type)].toString(",")») «if (!(funType.returnType instanceof VoidType)) {'''returns ( ret_«proc.symbolName» : «typeName(funType.returnType)») 
 			'''
 		} else {
 			""
 		}»«sideffects» 
+			{
 			«body»
+			}
 		''';
 	}
 
@@ -356,16 +470,16 @@ class GecosToUclidConverter {
 	}
 	
 	def static dispatch String typeName(VoidType type) {
-		"void"
+		"Void"
 	}
 	
 	def static dispatch String typeName(AliasType type) {
-		type.name
+		correctIdentifier(type.name)
 	}
-	
 	def static dispatch String typeName(ACIntTypeImpl type) {
-		if (type.getOverflowMode != OverflowMode.AC_WRAP)
-			System.err.println("Warning: UCLID supports only wrapping upon overflow. Defaulting to AC_WRAP")
+		if (type.getOverflowMode != OverflowMode.AC_WRAP) 
+			System.out.println("Warning: UCLID supports only wrapping upon overflow. Defaulting to AC_WRAP")
+			
 		
 		"bv" + type.bitSize
 	}
@@ -378,6 +492,18 @@ class GecosToUclidConverter {
 	def static dispatch String typeName(BoolType type) {
 		"boolean"
 	}
+	
+	def static dispatch String typeName(FloatType t) {
+		if (t.half)
+			"half"
+		else if (t.single)
+			"single"
+		else if (t.double)
+			"double"
+		else if (t.longDouble)
+			"double"
+		else throw new RuntimeException("Invalid float type. Fix FloatType class first")
+	}
 
 	def static dispatch String typeName(PtrType s) {
 		'''ptr_«s.base.typeName»'''
@@ -388,11 +514,11 @@ class GecosToUclidConverter {
 	}
 
 	def static dispatch String typeName(RecordType type) {
-		type.name
+		correctIdentifier(type.name)
 	}
 
 	def static dispatch String typeName(EnumType type) {
-		type.name
+		correctIdentifier(type.name)
 	}
 
 	def static dispatch declareType(Type s) {
@@ -400,12 +526,12 @@ class GecosToUclidConverter {
 	}
 	
 	def static dispatch declareType(VoidType s) {
-		""
+		"type Void = boolean;"
 	}
 	
 	def static dispatch declareType(AliasType t) {
 		
-		'''type «t.name» = «typeName(t.alias)»;'''
+		'''type «correctIdentifier(t.name)» = «typeName(t.alias)»;'''
 	}
 
 	def static dispatch declareType(PtrType s) {
@@ -414,7 +540,7 @@ class GecosToUclidConverter {
 
 	def static dispatch declareType(RecordType s) {
 		'''
-			type «s.name» = record {
+			type «correctIdentifier(s.name)» = record {
 				«FOR f : s.fields SEPARATOR ","»
 					«f.name» : «f.type.typeName»
 				«ENDFOR»
@@ -439,7 +565,7 @@ class GecosToUclidConverter {
 	}
 
 	def static dispatch declareType(EnumType s) {
-		'''type «s.name» = enum {«s.enumerators.map[name].toString(",")» };'''
+		'''type «correctIdentifier(s.name)» = enum {«s.enumerators.map[name].toString(",")» };'''
 	}
 
 	def static dispatch declare(ProcedureSymbol s) {
@@ -452,9 +578,8 @@ class GecosToUclidConverter {
 			}
 
 			val returnType = (s.type as FunctionType).returnType
-			if (!(returnType instanceof VoidType)) {
-				'''function «s.name»(«args.toString(",")») : «typeName(returnType)»;'''
-			} else ""
+			return '''function «correctIdentifier(s.name)»(«args.toString(",")») : «typeName(returnType)»;'''
+			
 		} else {
 			convert(s.procedure)
 		}
@@ -512,7 +637,6 @@ class GecosToUclidConverter {
 		}
 		
 		for (p : src.symbols.filter(ProcedureSymbol).reject[name == "main"].reject[isTopLevel]) {
-			System.out.println(p.name)
 			if (
 				(p.procedure === null || p.uninterpreted) &&
 				!src.symbols
@@ -530,33 +654,39 @@ class GecosToUclidConverter {
 				res.append('\t').append(p.declare).append('\n')
 			}
 		}
+		var tempVars = newHashSet()
+		tempVariables.add(tempVars)
+		
+		val mainBlocks = '''
+				init {
+					t =0;
+				«IF isTopLevelMode(src)»
+					«extractInitTopLevel(src)»
+				«ENDIF»
+				«FOR s : src.symbols.filter(ProcedureSymbol).filter[name.startsWith("init_")]»
+					call «s.name»();
+				«ENDFOR»
+				}
+			
+				next {
+					t'= t +1;
+				«IF isTopLevelMode(src)»
+					«extractNextTopLevel(src)»
+				«ENDIF»
+				«FOR s : src.symbols.filter(ProcedureSymbol).filter[name.startsWith("next_")]»
+					call «correctIdentifier(s.name)»();
+				«ENDFOR»
+				}
+		'''
 		
 		res.append(
 			'''
 			var t : integer;
 			var _finished123: boolean;
-			
-						init {
-							t =0;
-						«IF isTopLevelMode(src)»
-							«extractInitTopLevel(src)»
-						«ELSE»
-						«FOR s : src.symbols.filter(ProcedureSymbol).filter[name.startsWith("init_")]»
-							call «s.name»();
-						«ENDFOR»
-						«ENDIF»
-						}
-					
-						next {
-							t'= t +1;
-						«IF isTopLevelMode(src)»
-							«extractNextTopLevel(src)»
-						«ELSE»
-						«FOR s : src.symbols.filter(ProcedureSymbol).filter[name.startsWith("next_")]»
-							call «correctIdentifier(s.name)»();
-						«ENDFOR»
-						«ENDIF»
-						}
+			«FOR tmp_var : tempVars»
+			var «tmp_var»;
+			«ENDFOR»
+			«mainBlocks»	
 			
 						«extractInvariants(src)»
 					
@@ -569,6 +699,7 @@ class GecosToUclidConverter {
 						}
 			'''
 		)
+		
 		return res.toString()
 		
 		
@@ -630,7 +761,10 @@ class GecosToUclidConverter {
 	}
 	
 	def static correctIdentifier(String s) {
-		val reserved = #["in", "out"]
+		val reserved = #["in", "out", "next", "init", "module",
+						 "control", "induction", "bmc", "check",
+						 "print_results", "print_cex"
+		]
 		if (reserved.contains(s))
 			s + "___" + s.hashCode().toString()
 		else
@@ -652,14 +786,7 @@ class GecosToUclidConverter {
 		  .isEmpty
 	}
 	
-	enum State {
-		NOT_FOUND, INIT_LABEL_FOUND, INIT_FOUND, LOOP_FOUND, NEXT_LABEL_FOUND, NEXT_FOUND
-	}
 	
-	static class BlockOrInstr {
-		Block b;
-		Instruction i;
-	}
 
 	
 	def static extractInitTopLevel(GecosSourceFile src) {
