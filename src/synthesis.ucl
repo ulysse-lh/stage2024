@@ -16,8 +16,11 @@ synthesis function synth2(u: integer, v: integer): boolean;
 synthesis function synth3(u: integer, v: integer): boolean;
 
 
+type State = enum {
+    S0, S1, S2, S3
+};
 
-var state: integer;
+var state: State;
 var i: integer;
 var cpt: integer;
 
@@ -29,7 +32,7 @@ init {
     havoc int_in;
     i = int_in;
     cpt = int_in;
-    state = 0;
+    state = S0;
 
     t = 0;
 }
@@ -46,18 +49,18 @@ next {
 
 procedure next_impl() modifies state, i, cpt; {
     case
-        state == 0: {
+        state == S0: {
             if (!synth1(i, cpt)) {
-                state = 1;
+                state = S1;
             }
             i = i + 1;
         }
-        state == 1: {
-            state = if (synth2(i, cpt)) then 0 else 2;
+        state == S1: {
+            state = if (synth2(i, cpt)) then S0 else S2;
             cpt = cpt + 1;
         }
-        state == 2: {
-            state = if (synth3(i, cpt)) then 0 else 3;
+        state == S2: {
+            state = if (synth3(i, cpt)) then S0 else S3;
             cpt = cpt + 1;
         }
     esac;
@@ -69,7 +72,7 @@ procedure next_impl() modifies state, i, cpt; {
 //invariant valid_stuff: t >= 0;
 
 
-invariant inv: state == 0 ==> i == cpt;
+invariant inv: state == S0 ==> i == cpt;
 
 
 
