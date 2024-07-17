@@ -4,9 +4,13 @@ function cond(l: integer): boolean;
 function slow(l: integer): integer;
 function fast(l: integer): integer;
 
+type State = enum {
+    S0, S1, S2
+};
+
 var x1, x2: integer;
 var i1, i2: integer;
-var state2: integer;
+var state2: State;
 
 var x_in: integer;
 
@@ -17,7 +21,7 @@ init {
 
     x1 = x_in;
     x2 = x_in;
-    state2 = 0;
+    state2 = S0;
     i1 = 0;
     i2 = 0;
 
@@ -42,26 +46,25 @@ procedure next1() modifies x1, i1; {
 
 procedure next2() modifies x2, state2, i2; {
     case
-        state2 == 0: {
+        state2 == S0: {
             if (cond(x2)) {
-                state2 = 1;
+                state2 = S1;
             } else {
                 x2 = fast(x2);
                 i2 = i2 + 1;
             }
         }
-        state2 == 1: {
-            state2 = 2;
+        state2 == S1: {
+            state2 = S2;
         }
-        state2 == 2: {
+        state2 == S2: {
             x2 = slow(x2);
             i2 = i2 + 1;
-            state2 = 0;
+            state2 = S0;
         }
     esac;
 }
-
-invariant valid_stuff: t >= 0 && i1 == t && 0 <= i2 <= t;
+invariant valid_stuff: i1 == t && 0 <= i2 <= t;
 invariant goal: i1 == i2 ==> x1 == x2;
 
 
