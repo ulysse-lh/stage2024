@@ -1,12 +1,21 @@
 module main {
 
 
+type StateFSM1 = enum {
+    FSM1_0, FSM1_1, FSM1_2
+};
+
+type StateFSM2 = enum {
+    FSM2_0, FSM2_1, FSM2_2, FSM2_3, FSM2_4
+};
+
 function foo(l: integer): integer;
 function bar(l: integer): integer;
 
 var x1, x2: integer;
 var i1, i2: integer;
-var state1, state2: integer;
+var state1: StateFSM1;
+var state2: StateFSM2;
 
 var t: integer;
 
@@ -19,8 +28,8 @@ init {
     x2 = x_in;
     i1 = 0;
     i2 = 0;
-    state1 = 0;
-    state2 = 0;
+    state1 = FSM1_0;
+    state2 = FSM2_0;
     t = 0;
 }
 
@@ -35,12 +44,12 @@ next {
 
 procedure next1() modifies x1, i1, state1; {
     case
-        state1 == 0: {
-            state1 = 1;
+        state1 == FSM1_0: {
+            state1 = FSM1_1;
         }
-        state1 == 1: {
+        state1 == FSM1_1: {
             if (i1 >= 8) {
-                state1 = 2;
+                state1 = FSM1_2;
             } else {
                 x1 = foo(bar(x1));
                 i1 = i1 + 1;
@@ -52,42 +61,39 @@ procedure next1() modifies x1, i1, state1; {
 
 procedure next2() modifies x2,i2, state2; {
     case
-        state2 == 0: {
-            state2 = 1;
+        state2 == FSM2_0: {
+            state2 = FSM2_1;
         }
-        state2 == 1: {
+        state2 == FSM2_1: {
             if (i2 >= 8) {
-                state2 = 4;
+                state2 = FSM2_4;
             } else {
                 x2 = bar(x2);
-                state2 = 2;
+                state2 = FSM2_2;
             }
         }
-        state2 == 2: {
+        state2 == FSM2_2: {
             i2 = i2 + 1;
             x2 = foo(x2);
-            state2 = 3;
+            state2 = FSM2_3;
         }
-        state2 == 3: {
-            state2 = 1;
+        state2 == FSM2_3: {
+            state2 = FSM2_1;
         }
     esac;
 }
 
 
-invariant valid_stuff: t >= 0 && 0 <= state1 <= 2 && 0 <= state2 <= 4 && 0 <= i1 <= t && 0 <= i2 <= t &&
-                        (t > 0 && old(state1) == 0 ==> state1 == 1) && (t > 0 && state1 == 1 ==> old(state1) == 0 || old(state1) == 1) &&
-                        (t > 0 && state1 == 2 ==> old(state1) == 2 || old(state1) == 1) && (t > 0 && old(state2) == 0 ==> state2 == 1) &&
-                        (t > 0 && state2 == 1 ==> old(state2) == 0 || old(state2) == 3) && (t > 0 && state2 == 2 ==> old(state2) == 1) &&
-                        (t > 0 && state2 == 3 ==> old(state2) == 2) && (t > 0 && state2 == 4 ==> old(state2) == 4 || old(state2) == 1) &&
-                        (state1 > 0 <==> t > 0) && (state2 > 0 <==> t > 0);
+invariant v1: t >= 0 && 0 <= i1 <= t && 0 <= i2 <= t;
+invariant v2: (t > 0 && state2 == FSM2_1 ==> old(state2) == FSM2_0 || old(state2) == FSM2_3);
+invariant v3: (state1 != FSM1_0 <==> t > 0) && (state2 != FSM2_0 <==> t > 0);
 
 
 // main goal
-invariant goal: state1 == 2 && state2 == 4 ==> i1 == i2 && x1 == x2;
+invariant goal: state1 == FSM1_2 && state2 == FSM2_4 ==> i1 == i2 && x1 == x2;
 
 // alternative proof (actual loop invariant)
-invariant loop_inv: state1 == 1 && state2 == 2 && i1 == i2 ==> x1 == x2;
+invariant loop_inv: state1 == FSM1_1 && state2 == FSM2_2 && i1 == i2 ==> x1 == x2;
 
 
 control {
