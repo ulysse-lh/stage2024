@@ -416,8 +416,7 @@ class GecosToUclidConverter {
 								]
 								.flatten
 								.toSet
-		if (proc.symbol.name.contains("single"))
-			System.out.println(extRefsDeeper)
+		
 		val extRefsTotal = extRefs + extRefsDeeper
 		
 		val funType = proc.symbol.type as FunctionType
@@ -476,9 +475,14 @@ class GecosToUclidConverter {
 	def static dispatch String typeName(AliasType type) {
 		correctIdentifier(type.name)
 	}
+	
+	static var first_warning = true
+	
 	def static dispatch String typeName(ACIntTypeImpl type) {
-		if (type.getOverflowMode != OverflowMode.AC_WRAP) 
+		if (first_warning && type.getOverflowMode != OverflowMode.AC_WRAP) {
 			System.out.println("Warning: UCLID supports only wrapping upon overflow. Defaulting to AC_WRAP")
+			first_warning = false;	
+		}
 			
 		
 		"bv" + type.bitSize
@@ -591,15 +595,99 @@ class GecosToUclidConverter {
 
 
 	def static extractInvariants(GecosSourceFile pset) {
-		val str = new StringBuffer
+		/*val str = new StringBuffer
 		val pragmas =  pset.eAllContents.filter(PragmaAnnotation).toIterable
 		for (p:pragmas) {
 			val invs =  p.content.filter[it.contains("uclid::invariant")]
 			for (inv: invs) {
 				str.append(inv.replace("uclid::", "")+";\n")
-			}	
+			}
 		}
-		str.toString
+		str.toString*/
+		
+		val initSpec = extractInitSpec(pset)
+		val nextSpec = extractNextSpec(pset)
+		val initImpl = extractInitImpl(pset)
+		val nextImpl = extractNextImpl(pset)
+		
+		if (initSpec === null || nextSpec === null || initImpl === null || nextImpl === null)
+			return ""
+		
+		val initSpecProc = initSpec.procedure
+		val nextSpecProc = nextSpec.procedure
+		val initImplProc = initImpl.procedure
+		val nextImplProc = nextImpl.procedure
+		
+		if (initSpecProc === null || nextSpecProc === null || initImplProc === null || nextImplProc === null)
+			return ""
+		
+		val specRefs = EMFUtils.eAllContentsInstancesOf(nextSpecProc.body, ISymbolUse);
+		val specLocals = EMFUtils.eAllContentsInstancesOf(nextSpecProc.body, Symbol) + nextSpecProc.listParameters;
+		val specExtRefs = specRefs.reject[specLocals.contains(usedSymbol)].map[usedSymbol].reject(ProcedureSymbol).toSet
+		
+		val implRefs = EMFUtils.eAllContentsInstancesOf(nextImplProc.body, ISymbolUse);
+		val implLocals = EMFUtils.eAllContentsInstancesOf(nextImplProc.body, Symbol) + nextImplProc.listParameters;
+		val implExtRefs = implRefs.reject[implLocals.contains(usedSymbol)].map[usedSymbol].reject(ProcedureSymbol).toSet
+		
+		val varToCheck = specExtRefs
+									.filter[name.endsWith("_spec")]
+									.filter[
+										sym | !implExtRefs.filter[
+											name == sym.name.substring(0, sym.name.length - "_spec".length)
+										].empty
+									].map[name]
+		
+		val implPragmas = EMFUtils.eAllContentsInstancesOf(nextImplProc.body, PragmaAnnotation).map[content].flatten
+		val bestInitiationIntervalStr = implPragmas.findFirst[it.startsWith("HLS PIPELINE II=")]
+		val worstInitiationIntervalStr = implPragmas.findFirst[it.startsWith("HLS PIPELINE worst II=")]
+		
+		val bestInitiationInterval = Integer.valueOf(bestInitiationIntervalStr.substring("HLS PIPELINE II=".length))
+		val worstInitiationInterval = Integer.valueOf(worstInitiationIntervalStr.substring("HLS PIPELINE worst II=".length))
+		
+		
+		'''
+		invariant main_inv: (
+				«FOR v : varToCheck»
+					history(«v», «bestInitiationInterval») ==
+					history(«v.substring(0, v.length - "_spec".length)», «bestInitiationInterval») &&
+				«ENDFOR»
+				«IF !varToCheck.empty»
+					true
+				«ENDIF»
+				) ==> (
+				«FOR v : varToCheck»
+					«IF bestInitiationInterval - 1 > 0»
+					history(«v», «bestInitiationInterval - 1») ==
+					«ELSE»
+					«v» ==
+					«ENDIF»
+					«v.substring(0, v.length - "_spec".length)» &&
+				«ENDFOR»
+				«IF !varToCheck.empty»
+					true
+				«ENDIF»
+				) || (
+				«FOR v : varToCheck»
+					history(«v», «worstInitiationInterval») ==
+					history(«v.substring(0, v.length - "_spec".length)», «worstInitiationInterval») &&
+				«ENDFOR»
+				«IF !varToCheck.empty»
+					true
+				«ENDIF»
+				) ==> (
+				«FOR v : varToCheck»
+					«IF worstInitiationInterval - 1 > 0»
+					history(«v», «worstInitiationInterval - 1») ==
+					«ELSE»
+					«v»
+					«ENDIF»
+					«v.substring(0, v.length - "_spec".length)» &&
+				«ENDFOR»
+				«IF !varToCheck.empty»
+					true
+				«ENDIF»
+				);
+		'''
 	}
 
 	def static extractCEX(GecosSourceFile pset) {
@@ -853,5 +941,53 @@ class GecosToUclidConverter {
 	}
 	
 
+
+	def static extractInitSpec(GecosSourceFile s) {
+		s.symbols
+			.filter(ProcedureSymbol)
+			.filter[name.startsWith("init_")]
+			.filter[p | !p.eAllContents
+		  					.filter(PragmaAnnotation)
+		  					.filter[content.exists[it.contains("spec")]]
+		  					.isEmpty
+		  	]
+		  	.head
+	}
+	
+	def static extractNextSpec(GecosSourceFile s) {
+		s.symbols
+			.filter(ProcedureSymbol)
+			.filter[name.startsWith("next_")]
+			.filter[p | !p.eAllContents
+		  					.filter(PragmaAnnotation)
+		  					.filter[content.exists[it.contains("spec")]]
+		  					.isEmpty
+		  	]
+		  	.head
+	}
+	
+	def static extractInitImpl(GecosSourceFile s) {
+		s.symbols
+			.filter(ProcedureSymbol)
+			.filter[name.startsWith("init_")]
+			.filter[p | !p.eAllContents
+		  					.filter(PragmaAnnotation)
+		  					.filter[content.exists[it.contains("impl")]]
+		  					.isEmpty
+		  	]
+		  	.head
+	}
+	
+	def static extractNextImpl(GecosSourceFile s) {
+		s.symbols
+			.filter(ProcedureSymbol)
+			.filter[name.startsWith("next_")]
+			.filter[p | !p.eAllContents
+		  					.filter(PragmaAnnotation)
+		  					.filter[content.exists[it.contains("impl")]]
+		  					.isEmpty
+		  	]
+		  	.head
+	}
 
 }
