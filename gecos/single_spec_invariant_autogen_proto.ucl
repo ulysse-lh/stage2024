@@ -1,0 +1,1304 @@
+module main{
+
+	
+	type size_t = integer;
+	type ptr_integer = integer;
+	type va_list = ptr_integer;
+	type TFILE = record {
+	_dummy123 : integer
+};
+
+	type FILE = TFILE;
+	type fpos_t = integer;
+	type _FILE = FILE;
+	type ptr__FILE = integer;
+	type Void = boolean;
+	type ptr_FILE = integer;
+	
+	
+	type ptr_fpos_t = integer;
+	
+	
+	
+	
+	
+	
+	type _size_t = size_t;
+	type ptr_Void = integer;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	type ptr_ptr_integer = integer;
+	
+	
+	
+	
+	type array_2057954324 = [integer]  ptr_integer;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	type t_SpecSCC_10_fsm_state_new = enum {SpecSCC_10_fsm_Proceed,SpecSCC_10_fsm_x1__Rollback,SpecSCC_10_fsm_x1__Fill0,SpecSCC_10_fsm_x1__Fill1,SpecSCC_10_fsm_Init0,SpecSCC_10_fsm_Init1 };
+	type SCC_14_out_0 = record {
+	p0_guard : boolean,
+	p1 : integer,
+	p2 : boolean,
+	p3 : boolean,
+	p4 : boolean
+};
+
+	
+	type SCC_14_to_SpecSCC_10_out = record {
+	write : boolean,
+	data : SCC_14_out_0
+};
+
+	type SpecSCC_10_out_0 = record {
+	p0 : integer,
+	p1 : boolean,
+	p2 : boolean,
+	p3 : boolean,
+	p4 : integer
+};
+
+	type SpecSCC_10_to_SCC_15_out = record {
+	write : boolean,
+	data : SpecSCC_10_out_0
+};
+
+	type fifo_SCC_14_to_SpecSCC_10 = record {
+	data_out : SCC_14_out_0,
+	empty : boolean
+};
+
+	type fifo_SpecSCC_10_to_SCC_15 = record {
+	data_out : SpecSCC_10_out_0,
+	empty : boolean
+};
+
+	type fsm_cmd_x = record {
+	nextInput : bv1,
+	commit : bv1,
+	muRollBack : bv3,
+	arrayRollBack : bv32,
+	rewind : bv3,
+	rbwe : bv1,
+	gammaRollBack_x : bv32,
+	startStall_x : bv1,
+	selSlowPath_x : bv32
+};
+
+	
+	
+	
+	type fsm_mispec_in_x = record {
+	x : bv32
+};
+
+	type statex = record {
+	state : t_SpecSCC_10_fsm_state_new,
+	rewindCpt : bv3,
+	delayed_commit_0 : bv1,
+	delayed_commit_1 : bv1,
+	delayed_commit_2 : bv1,
+	array_rollback : bv32,
+	mu_rollback : bv3,
+	rewind : bv3,
+	rbwe : bv1,
+	commit_x : bv1,
+	selSlowPath_x : bv32,
+	rollback_x : bv32,
+	startStall_x : bv1,
+	rewindDepth : bv3,
+	slowPath_x : bv32
+};
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	var EOF : integer;
+	var stdin : ptr__FILE;
+	var stdout : ptr__FILE;
+	var stderr : ptr__FILE;
+	var optarg : ptr_integer;
+	var optind : integer;
+	var opterr : integer;
+	var optopt : integer;
+	var SCC_14_SpecSCC_10_data : SCC_14_out_0;
+	var SCC_14_SpecSCC_10_empty_flag : boolean;
+	var SCC_14_SpecSCC_10_full_flag : boolean;
+	var SpecSCC_10_SCC_15_data : SpecSCC_10_out_0;
+	var SpecSCC_10_SCC_15_empty_flag : boolean;
+	var SpecSCC_10_SCC_15_full_flag : boolean;
+	var i : integer;
+	var ccycles : integer;
+	var io_state : integer;
+	var _SpecSCC_10_dline3_1_dline_0 : integer;
+	var _SpecSCC_10_dline3_1_dline_1 : integer;
+	var _SpecSCC_10_dline3_1_dline_2 : integer;
+	var _SpecSCC_10_dline2_2_dline_0 : boolean;
+	var _SpecSCC_10_dline2_2_dline_1 : boolean;
+	var _SpecSCC_10_dline1_3_dline_0 : statex;
+	var SpecSCC_10_nextInput : bv1;
+	var SpecSCC_10_commit : bv1;
+	var SpecSCC_10_muRollback : bv3;
+	var SpecSCC_10_rewind : bv3;
+	var SpecSCC_10_rbwe : bv1;
+	var SpecSCC_10_selSlowPath_x : bv32;
+	var _SpecSCC_10_dline3_4_dline_0 : integer;
+	var _SpecSCC_10_dline3_4_dline_1 : integer;
+	var _SpecSCC_10_dline3_4_dline_2 : integer;
+	var _SpecSCC_10_dline3_5_dline_0 : boolean;
+	var _SpecSCC_10_dline3_5_dline_1 : boolean;
+	var _SpecSCC_10_dline3_5_dline_2 : boolean;
+	var _SpecSCC_10_dline3_6_dline_0 : boolean;
+	var _SpecSCC_10_dline3_6_dline_1 : boolean;
+	var _SpecSCC_10_dline3_6_dline_2 : boolean;
+	var _SpecSCC_10_dline3_7_dline_0 : boolean;
+	var _SpecSCC_10_dline3_7_dline_1 : boolean;
+	var _SpecSCC_10_dline3_7_dline_2 : boolean;
+	var _SpecSCC_10_dline3_8_dline_0 : integer;
+	var _SpecSCC_10_dline3_8_dline_1 : integer;
+	var _SpecSCC_10_dline3_8_dline_2 : integer;
+	var loop_s : boolean;
+	var start_s : boolean;
+	var x : integer;
+	var guard : boolean;
+	var cmd : fsm_cmd_x;
+	var _guard_0 : boolean;
+	var _i_1 : integer;
+	var SCC_14_out_0_var : SCC_14_to_SpecSCC_10_out;
+	var SpecSCC_10_in_0 : SCC_14_out_0;
+	var _SpecSCC_10_dline3_1_pop_0 : integer;
+	var _SpecSCC_10_dline2_2_pop_1 : boolean;
+	var _SpecSCC_10_dline1_3_pop_2 : statex;
+	var _SpecSCC_10_dline3_4_pop_3 : integer;
+	var _SpecSCC_10_dline3_5_pop_4 : boolean;
+	var _SpecSCC_10_dline3_6_pop_5 : boolean;
+	var _SpecSCC_10_dline3_7_pop_6 : boolean;
+	var _SpecSCC_10_dline3_8_pop_7 : integer;
+	var _rollBack_SpecSCC_10_28_x_mu_8 : integer;
+	var _x_9 : integer;
+	var SpecSCC_10_mu_x_10 : integer;
+	var _fsm_x_next_11 : statex;
+	var _mispec_12 : boolean;
+	var _slow_13 : integer;
+	var _fast_14 : integer;
+	var _rewind_SpecSCC_10_34_15 : boolean;
+	var _rewind_SpecSCC_10_35_16 : boolean;
+	var _rewind_SpecSCC_10_37_17 : integer;
+	var _rewind_SpecSCC_10_39_18 : boolean;
+	var _rewind_SpecSCC_10_41_19 : boolean;
+	var SpecSCC_10_out_0_var : SpecSCC_10_to_SCC_15_out;
+	var SCC_15_in_0 : SpecSCC_10_out_0;
+	var _io_state_0 : integer;
+	var _io_printf_1 : integer;
+	var x_spec : integer;
+	function clearerr(in_0 : ptr_FILE) : Void;
+	function fclose(in_0 : ptr_FILE) : integer;
+	function feof(in_0 : ptr_FILE) : integer;
+	function ferror(in_0 : ptr_FILE) : integer;
+	function fflush(in_0 : ptr_FILE) : integer;
+	function fgetc(in_0 : ptr_FILE) : integer;
+	function fgetpos(in_0 : ptr_FILE,in_1 : ptr_fpos_t) : integer;
+	function fgets(in_0 : ptr_integer,in_1 : integer,in_2 : ptr_FILE) : ptr_integer;
+	function fopen(in_0 : ptr_integer,in_1 : ptr_integer) : ptr__FILE;
+	function fprintf(in_0 : ptr_FILE,in_1 : ptr_integer) : integer;
+	function fputc(in_0 : integer,in_1 : ptr_FILE) : integer;
+	function fputs(in_0 : ptr_integer,in_1 : ptr_FILE) : integer;
+	function fread(in_0 : ptr_Void,in_1 : size_t,in_2 : size_t,in_3 : ptr_FILE) : _size_t;
+	function freopen(in_0 : ptr_integer,in_1 : ptr_integer,in_2 : ptr_FILE) : ptr__FILE;
+	function fscanf(in_0 : ptr_FILE,in_1 : ptr_integer) : integer;
+	function fseek(in_0 : ptr_FILE,in_1 : integer,in_2 : integer) : integer;
+	function fsetpos(in_0 : ptr_FILE,in_1 : ptr_fpos_t) : integer;
+	function ftell(in_0 : ptr_FILE) : integer;
+	function fwrite(in_0 : ptr_Void,in_1 : size_t,in_2 : size_t,in_3 : ptr_FILE) : _size_t;
+	function getc(in_0 : ptr_FILE) : integer;
+	function getchar() : integer;
+	function gets(in_0 : ptr_integer) : ptr_integer;
+	function perror(in_0 : ptr_integer) : Void;
+	function printf(in_0 : ptr_integer) : integer;
+	function putc(in_0 : integer,in_1 : ptr_FILE) : integer;
+	function putchar(in_0 : integer) : integer;
+	function puts(in_0 : ptr_integer) : integer;
+	function remove(in_0 : ptr_integer) : integer;
+	function rename(in_0 : ptr_integer,in_1 : ptr_integer) : integer;
+	function rewind(in_0 : ptr_FILE) : Void;
+	function scanf(in_0 : ptr_integer) : integer;
+	function setbuf(in_0 : ptr_FILE,in_1 : ptr_integer) : Void;
+	function setlinebuf(in_0 : ptr_FILE) : Void;
+	function setbuffer(in_0 : ptr_FILE,in_1 : ptr_integer,in_2 : integer) : Void;
+	function setvbuf(in_0 : ptr_FILE,in_1 : ptr_integer,in_2 : integer,in_3 : size_t) : integer;
+	function sprintf(in_0 : ptr_integer,in_1 : ptr_integer) : integer;
+	function sscanf(in_0 : ptr_integer,in_1 : ptr_integer) : integer;
+	function tmpfile() : ptr__FILE;
+	function tmpnam(in_0 : ptr_integer) : ptr_integer;
+	function ungetc(in_0 : integer,in_1 : ptr_FILE) : integer;
+	function vfprintf(in_0 : ptr_FILE,in_1 : ptr_integer) : integer;
+	function vprintf(in_0 : ptr_integer) : integer;
+	function vsprintf(in_0 : ptr_integer,in_1 : ptr_integer) : integer;
+	function fcloseall() : integer;
+	function asprintf(in_0 : ptr_ptr_integer,in_1 : ptr_integer) : integer;
+	function vasprintf(in_0 : ptr_ptr_integer,in_1 : ptr_integer) : integer;
+	function getenv(in_0 : ptr_integer) : ptr_integer;
+	function popen(in_0 : ptr_integer,in_1 : ptr_integer) : ptr_FILE;
+	function pclose(in_0 : ptr_FILE) : integer;
+	function unlink(in_0 : ptr_integer) : integer;
+	function getopt(in_0 : integer,in_1 : array_2057954324,in_2 : ptr_integer) : integer;
+	function atoi(in_0 : ptr_integer) : integer;
+	function atof(in_0 : ptr_integer) : double;
+	function atol(in_0 : ptr_integer) : integer;
+	function abort() : Void;
+	function exit(in_0 : integer) : Void;
+	function system(in_0 : ptr_integer) : integer;
+	function malloc(in_0 : integer) : ptr_Void;
+	function realloc(in_0 : ptr_integer,in_1 : integer) : ptr_integer;
+	function random() : integer;
+	function rand() : integer;
+	function free(in_0 : ptr_Void) : Void;
+	function srandom(in_0 : integer) : Void;
+	function calloc(in_0 : integer,in_1 : integer) : ptr_Void;
+	function mktemp(in_0 : ptr_integer) : ptr_integer;
+	function strtoul(in_0 : ptr_integer,in_1 : ptr_ptr_integer,in_2 : integer) : integer;
+	function strtoull(in_0 : ptr_integer,in_1 : ptr_ptr_integer,in_2 : integer) : integer;
+	function strcpy(in_0 : ptr_integer,in_1 : ptr_integer) : ptr_integer;
+	function strncpy(in_0 : ptr_integer,in_1 : ptr_integer,in_2 : integer) : ptr_integer;
+	function strcat(in_0 : ptr_integer,in_1 : ptr_integer) : ptr_integer;
+	function strncat(in_0 : ptr_integer,in_1 : ptr_integer,in_2 : integer) : ptr_integer;
+	function strchr(in_0 : ptr_integer,in_1 : integer) : ptr_integer;
+	function strrchr(in_0 : ptr_integer,in_1 : integer) : ptr_integer;
+	function strpbrk(in_0 : ptr_integer,in_1 : ptr_integer) : ptr_integer;
+	function strtok(in_0 : ptr_integer,in_1 : ptr_integer) : ptr_integer;
+	function strstr(in_0 : ptr_integer,in_1 : ptr_integer) : ptr_integer;
+	function strlen(in_0 : ptr_integer) : integer;
+	function strnlen(in_0 : ptr_integer,in_1 : integer) : integer;
+	function strspn(in_0 : ptr_integer,in_1 : ptr_integer) : integer;
+	function strcspn(in_0 : ptr_integer,in_1 : ptr_integer) : integer;
+	function strcmp(in_0 : ptr_integer,in_1 : ptr_integer) : integer;
+	function strncmp(in_0 : ptr_integer,in_1 : ptr_integer,in_2 : integer) : integer;
+	function strnicmp(in_0 : ptr_integer,in_1 : ptr_integer,in_2 : integer) : integer;
+	function memset(in_0 : ptr_Void,in_1 : integer,in_2 : integer) : ptr_Void;
+	function memcpy(in_0 : ptr_Void,in_1 : ptr_Void,in_2 : integer) : ptr_Void;
+	function memmove(in_0 : ptr_Void,in_1 : ptr_Void,in_2 : integer) : ptr_Void;
+	function memscan(in_0 : ptr_Void,in_1 : integer,in_2 : integer) : ptr_Void;
+	function memcmp(in_0 : ptr_Void,in_1 : ptr_Void,in_2 : integer) : integer;
+	function ___string_h() : Void;
+	procedure SCC_14_SpecSCC_10_empty() returns ( ret_SCC_14_SpecSCC_10_empty : boolean) 
+modifies SCC_14_SpecSCC_10_empty_flag; 
+{
+
+
+ret_SCC_14_SpecSCC_10_empty = SCC_14_SpecSCC_10_empty_flag;
+
+}
+
+	procedure SCC_14_SpecSCC_10_full() returns ( ret_SCC_14_SpecSCC_10_full : boolean) 
+modifies SCC_14_SpecSCC_10_full_flag; 
+{
+
+
+ret_SCC_14_SpecSCC_10_full = SCC_14_SpecSCC_10_full_flag;
+
+}
+
+	procedure SCC_14_SpecSCC_10_read() modifies SCC_14_SpecSCC_10_empty_flag,SCC_14_SpecSCC_10_full_flag; 
+{
+
+
+SCC_14_SpecSCC_10_empty_flag = true;
+SCC_14_SpecSCC_10_full_flag = false;
+//;
+
+}
+
+	procedure SCC_14_SpecSCC_10_write(in___3365_arg: SCC_14_to_SpecSCC_10_out) modifies SCC_14_SpecSCC_10_empty_flag,SCC_14_SpecSCC_10_full_flag,SCC_14_SpecSCC_10_data; 
+{
+
+	var in___3365:SCC_14_to_SpecSCC_10_out;
+	in___3365 = in___3365_arg;
+
+if (in___3365.write) {	
+	SCC_14_SpecSCC_10_empty_flag = false;
+	
+	SCC_14_SpecSCC_10_full_flag = true;
+	
+	SCC_14_SpecSCC_10_data = in___3365.data;
+}
+
+//;
+
+}
+
+	procedure SCC_14_SpecSCC_10_peek() returns ( ret_SCC_14_SpecSCC_10_peek : SCC_14_out_0) 
+modifies SCC_14_SpecSCC_10_data; 
+{
+
+
+ret_SCC_14_SpecSCC_10_peek = SCC_14_SpecSCC_10_data;
+
+}
+
+	procedure SpecSCC_10_SCC_15_empty() returns ( ret_SpecSCC_10_SCC_15_empty : boolean) 
+modifies SpecSCC_10_SCC_15_empty_flag; 
+{
+
+
+ret_SpecSCC_10_SCC_15_empty = SpecSCC_10_SCC_15_empty_flag;
+
+}
+
+	procedure SpecSCC_10_SCC_15_full() returns ( ret_SpecSCC_10_SCC_15_full : boolean) 
+modifies SpecSCC_10_SCC_15_full_flag; 
+{
+
+
+ret_SpecSCC_10_SCC_15_full = SpecSCC_10_SCC_15_full_flag;
+
+}
+
+	procedure SpecSCC_10_SCC_15_read() modifies SpecSCC_10_SCC_15_empty_flag,SpecSCC_10_SCC_15_full_flag; 
+{
+
+
+SpecSCC_10_SCC_15_empty_flag = true;
+SpecSCC_10_SCC_15_full_flag = false;
+//;
+
+}
+
+	procedure SpecSCC_10_SCC_15_write(in___3365_arg: SpecSCC_10_to_SCC_15_out) modifies SpecSCC_10_SCC_15_empty_flag,SpecSCC_10_SCC_15_full_flag,SpecSCC_10_SCC_15_data; 
+{
+
+	var in___3365:SpecSCC_10_to_SCC_15_out;
+	in___3365 = in___3365_arg;
+
+if (in___3365.write) {	
+	SpecSCC_10_SCC_15_empty_flag = false;
+	
+	SpecSCC_10_SCC_15_full_flag = true;
+	
+	SpecSCC_10_SCC_15_data = in___3365.data;
+}
+
+//;
+
+}
+
+	procedure SpecSCC_10_SCC_15_peek() returns ( ret_SpecSCC_10_SCC_15_peek : SpecSCC_10_out_0) 
+modifies SpecSCC_10_SCC_15_data; 
+{
+
+
+ret_SpecSCC_10_SCC_15_peek = SpecSCC_10_SCC_15_data;
+
+}
+
+	function next___3377907(in_0 : integer) : integer;
+	function slow(in_0 : integer) : integer;
+	function fast(in_0 : integer) : integer;
+	function mispec(in_0 : integer) : boolean;
+	function get_ticks() : integer;
+	function get_trip_count() : integer;
+	function io_printf(in_0 : integer,in_1 : boolean,in_2 : ptr_integer) : integer;
+	function rollBack_SpecSCC_10_28_x_mu(in_0 : integer,in_1 : bv3,in_2 : bv1) : integer;
+	function rewind_SpecSCC_10_34(in_0 : boolean,in_1 : bv3,in_2 : bv1) : boolean;
+	function rewind_SpecSCC_10_35(in_0 : boolean,in_1 : bv3,in_2 : bv1) : boolean;
+	function rewind_SpecSCC_10_37(in_0 : integer,in_1 : bv3,in_2 : bv1) : integer;
+	function rewind_SpecSCC_10_39(in_0 : boolean,in_1 : bv3,in_2 : bv1) : boolean;
+	function rewind_SpecSCC_10_41(in_0 : boolean,in_1 : bv3,in_2 : bv1) : boolean;
+	procedure SpecSCC_10_fsm_nxt(mispec_x_arg: bv32,state_arg: statex) returns ( ret_SpecSCC_10_fsm_nxt : statex) 
+{
+
+	var mispec_x:bv32;
+	var state:statex;
+	mispec_x = mispec_x_arg;
+	state = state_arg;
+
+case
+(state.state==SpecSCC_10_fsm_Proceed) : {
+	state.rbwe = 1bv1;
+	
+	state.commit_x = 1bv1;
+	
+	state.selSlowPath_x = 0bv32;
+	
+	state.commit_x = 1bv1;
+	
+	if ((mispec_x == 1bv32)) {	
+		state.state = SpecSCC_10_fsm_x1__Rollback;
+		
+		state.rbwe = 0bv1;
+		
+		state.commit_x = 0bv1;
+		
+		state.rewindDepth = 3bv3;
+		
+		state.slowPath_x = 1bv32;
+		
+		state.startStall_x = 1bv1;
+		
+		state.selSlowPath_x = state.slowPath_x;
+		
+		state.rbwe = 1bv1;
+		
+		state.array_rollback = 3bv32;
+		
+		state.mu_rollback = 3bv3;
+		
+		state.rewind = state.rewindDepth;
+	}
+	
+	// No equivalent to BreakInstructionImpl;
+}
+(state.state==SpecSCC_10_fsm_x1__Rollback) : {
+	state.rbwe = 1bv1;
+	
+	state.selSlowPath_x = 0bv32;
+	
+	if (true) {	
+		state.state = SpecSCC_10_fsm_x1__Fill0;
+	}
+	
+	// No equivalent to BreakInstructionImpl;
+}
+(state.state==SpecSCC_10_fsm_x1__Fill0) : {
+	state.rbwe = 1bv1;
+	
+	state.selSlowPath_x = 0bv32;
+	
+	if (true) {	
+		state.state = SpecSCC_10_fsm_x1__Fill1;
+	}
+	
+	// No equivalent to BreakInstructionImpl;
+}
+(state.state==SpecSCC_10_fsm_x1__Fill1) : {
+	state.rbwe = 1bv1;
+	
+	state.selSlowPath_x = 0bv32;
+	
+	state.commit_x = 1bv1;
+	
+	state.selSlowPath_x = 0bv32;
+	
+	if (true) {	
+		state.state = SpecSCC_10_fsm_Proceed;
+	}
+	
+	// No equivalent to BreakInstructionImpl;
+}
+(state.state==SpecSCC_10_fsm_Init0) : {
+	state.rbwe = 1bv1;
+	
+	state.selSlowPath_x = 0bv32;
+	
+	if (true) {	
+		state.state = SpecSCC_10_fsm_Init1;
+	}
+	
+	// No equivalent to BreakInstructionImpl;
+}
+(state.state==SpecSCC_10_fsm_Init1) : {
+	state.rbwe = 1bv1;
+	
+	state.selSlowPath_x = 0bv32;
+	
+	if (true) {	
+		state.state = SpecSCC_10_fsm_Proceed;
+	}
+	
+	// No equivalent to BreakInstructionImpl;
+}
+default : {
+	state.array_rollback = 0bv32;
+	
+	state.mu_rollback = 0bv3;
+	
+	state.rewind = 0bv3;
+	
+	state.rbwe = 0bv1;
+	
+	state.commit_x = 0bv1;
+	
+	state.selSlowPath_x = 0bv32;
+	
+	state.rollback_x = 0bv32;
+	
+	state.startStall_x = 0bv1;
+	
+	state.rewindDepth = 0bv3;
+	
+	state.slowPath_x = 0bv32;
+}
+esac;
+
+ret_SpecSCC_10_fsm_nxt = state;
+
+}
+
+	procedure fsm_x_command(cs_arg: statex) returns ( ret_fsm_x_command : fsm_cmd_x) 
+{
+
+	var result : fsm_cmd_x;
+	var cs:statex;
+	cs = cs_arg;
+
+result.nextInput = if ((cs.rewindCpt == 0bv3)) then 0bv1 else 1bv1;
+result.commit = cs.delayed_commit_0;
+result.rewind = cs.rewind;
+result.muRollBack = cs.mu_rollback;
+result.arrayRollBack = cs.array_rollback;
+result.gammaRollBack_x = cs.rollback_x;
+result.selSlowPath_x = cs.selSlowPath_x;
+result.startStall_x = cs.startStall_x;
+result.rbwe = cs.rbwe;
+ret_fsm_x_command = result;
+
+}
+
+	procedure fsm_x_next(mispecBits_arg: fsm_mispec_in_x,currentState_arg: statex) returns ( ret_fsm_x_next : statex) 
+{
+
+	var mispecBits:fsm_mispec_in_x;
+	var currentState:statex;
+	mispecBits = mispecBits_arg;
+	currentState = currentState_arg;
+
+currentState.array_rollback = 0bv32;
+currentState.mu_rollback = 0bv3;
+currentState.rewind = 0bv3;
+currentState.rbwe = 0bv1;
+currentState.commit_x = 0bv1;
+currentState.selSlowPath_x = 0bv32;
+currentState.rollback_x = 0bv32;
+currentState.startStall_x = 0bv1;
+call (currentState) = SpecSCC_10_fsm_nxt(mispecBits.x, currentState);
+
+if ((currentState.rewindCpt > 0bv3)) {	
+	currentState.rewindCpt = (currentState.rewindCpt - 1bv3);
+}
+
+currentState.rewindCpt = (currentState.rewindCpt + currentState.rewind);
+currentState.delayed_commit_0 = (currentState.delayed_commit_1 & currentState.commit_x);
+currentState.delayed_commit_1 = currentState.delayed_commit_2;
+currentState.delayed_commit_2 = 1bv1;
+ret_fsm_x_next = currentState;
+
+}
+
+	procedure fsm_mispec_in_x_value_0(p_0_arg: bv32) returns ( ret_fsm_mispec_in_x_value_0 : fsm_mispec_in_x) 
+{
+
+	var res : fsm_mispec_in_x;
+	var p_0:bv32;
+	p_0 = p_0_arg;
+
+res.x = p_0;
+ret_fsm_mispec_in_x_value_0 = res;
+
+}
+
+	procedure SpecSCC_10_out_0_value_1(p_0_arg: integer,p_1_arg: boolean,p_2_arg: boolean,p_3_arg: boolean,p_4_arg: integer) returns ( ret_SpecSCC_10_out_0_value_1 : SpecSCC_10_out_0) 
+{
+
+	var res : SpecSCC_10_out_0;
+	var p_0:integer;
+	var p_1:boolean;
+	var p_2:boolean;
+	var p_3:boolean;
+	var p_4:integer;
+	p_0 = p_0_arg;
+	p_1 = p_1_arg;
+	p_2 = p_2_arg;
+	p_3 = p_3_arg;
+	p_4 = p_4_arg;
+
+res.p0 = p_0;
+res.p1 = p_1;
+res.p2 = p_2;
+res.p3 = p_3;
+res.p4 = p_4;
+ret_SpecSCC_10_out_0_value_1 = res;
+
+}
+
+	procedure SpecSCC_10_to_SCC_15_out_value_2(p_0_arg: boolean,p_1_arg: SpecSCC_10_out_0) returns ( ret_SpecSCC_10_to_SCC_15_out_value_2 : SpecSCC_10_to_SCC_15_out) 
+{
+
+	var res : SpecSCC_10_to_SCC_15_out;
+	var p_0:boolean;
+	var p_1:SpecSCC_10_out_0;
+	p_0 = p_0_arg;
+	p_1 = p_1_arg;
+
+res.write = p_0;
+res.data = p_1;
+ret_SpecSCC_10_to_SCC_15_out_value_2 = res;
+
+}
+
+	procedure SCC_14_out_0_value_3(p_0_arg: boolean,p_1_arg: integer,p_2_arg: boolean,p_3_arg: boolean,p_4_arg: boolean) returns ( ret_SCC_14_out_0_value_3 : SCC_14_out_0) 
+{
+
+	var res : SCC_14_out_0;
+	var p_0:boolean;
+	var p_1:integer;
+	var p_2:boolean;
+	var p_3:boolean;
+	var p_4:boolean;
+	p_0 = p_0_arg;
+	p_1 = p_1_arg;
+	p_2 = p_2_arg;
+	p_3 = p_3_arg;
+	p_4 = p_4_arg;
+
+res.p0_guard = p_0;
+res.p1 = p_1;
+res.p2 = p_2;
+res.p3 = p_3;
+res.p4 = p_4;
+ret_SCC_14_out_0_value_3 = res;
+
+}
+
+	procedure SCC_14_to_SpecSCC_10_out_value_4(p_0_arg: boolean,p_1_arg: SCC_14_out_0) returns ( ret_SCC_14_to_SpecSCC_10_out_value_4 : SCC_14_to_SpecSCC_10_out) 
+{
+
+	var res : SCC_14_to_SpecSCC_10_out;
+	var p_0:boolean;
+	var p_1:SCC_14_out_0;
+	p_0 = p_0_arg;
+	p_1 = p_1_arg;
+
+res.write = p_0;
+res.data = p_1;
+ret_SCC_14_to_SpecSCC_10_out_value_4 = res;
+
+}
+
+	procedure statex_value_5(p_0_arg: t_SpecSCC_10_fsm_state_new,p_1_arg: bv3,p_2_arg: bv1,p_3_arg: bv1,p_4_arg: bv1,p_5_arg: bv32,p_6_arg: bv3,p_7_arg: bv3,p_8_arg: bv1,p_9_arg: bv1,p_10_arg: bv32,p_11_arg: bv32,p_12_arg: bv1,p_13_arg: bv3,p_14_arg: bv32) returns ( ret_statex_value_5 : statex) 
+{
+
+	var res : statex;
+	var p_0:t_SpecSCC_10_fsm_state_new;
+	var p_1:bv3;
+	var p_2:bv1;
+	var p_3:bv1;
+	var p_4:bv1;
+	var p_5:bv32;
+	var p_6:bv3;
+	var p_7:bv3;
+	var p_8:bv1;
+	var p_9:bv1;
+	var p_10:bv32;
+	var p_11:bv32;
+	var p_12:bv1;
+	var p_13:bv3;
+	var p_14:bv32;
+	p_0 = p_0_arg;
+	p_1 = p_1_arg;
+	p_2 = p_2_arg;
+	p_3 = p_3_arg;
+	p_4 = p_4_arg;
+	p_5 = p_5_arg;
+	p_6 = p_6_arg;
+	p_7 = p_7_arg;
+	p_8 = p_8_arg;
+	p_9 = p_9_arg;
+	p_10 = p_10_arg;
+	p_11 = p_11_arg;
+	p_12 = p_12_arg;
+	p_13 = p_13_arg;
+	p_14 = p_14_arg;
+
+res.state = p_0;
+res.rewindCpt = p_1;
+res.delayed_commit_0 = p_2;
+res.delayed_commit_1 = p_3;
+res.delayed_commit_2 = p_4;
+res.array_rollback = p_5;
+res.mu_rollback = p_6;
+res.rewind = p_7;
+res.rbwe = p_8;
+res.commit_x = p_9;
+res.selSlowPath_x = p_10;
+res.rollback_x = p_11;
+res.startStall_x = p_12;
+res.rewindDepth = p_13;
+res.slowPath_x = p_14;
+ret_statex_value_5 = res;
+
+}
+
+	procedure fsmx_init() returns ( ret_fsmx_init : statex) 
+{
+
+
+call (ret_fsmx_init) = statex_value_5(SpecSCC_10_fsm_Init0,0bv3,0bv1,0bv1,0bv1,0bv32,0bv3,0bv3,1bv1,0bv1,0bv32,0bv32,0bv1,0bv3,0bv32);
+
+}
+
+	procedure SpecSCC_10_dline3_1_push(data_in_arg: integer,push_enable_arg: boolean) modifies _SpecSCC_10_dline3_1_dline_2,_SpecSCC_10_dline3_1_dline_1,_SpecSCC_10_dline3_1_dline_0; 
+{
+
+	var data_in:integer;
+	var push_enable:boolean;
+	data_in = data_in_arg;
+	push_enable = push_enable_arg;
+
+if (push_enable) {	
+	_SpecSCC_10_dline3_1_dline_2 = _SpecSCC_10_dline3_1_dline_1;
+	
+	_SpecSCC_10_dline3_1_dline_1 = _SpecSCC_10_dline3_1_dline_0;
+	
+	_SpecSCC_10_dline3_1_dline_0 = data_in;
+}
+
+}
+
+	procedure SpecSCC_10_dline3_1_pop(pop_enable_arg: boolean) returns ( ret_SpecSCC_10_dline3_1_pop : integer) 
+modifies _SpecSCC_10_dline3_1_dline_2; 
+{
+
+	var pop_enable:boolean;
+	pop_enable = pop_enable_arg;
+
+if (pop_enable) {	
+}
+
+ret_SpecSCC_10_dline3_1_pop = _SpecSCC_10_dline3_1_dline_2;
+
+}
+
+	procedure SpecSCC_10_dline2_2_push(data_in_arg: boolean,push_enable_arg: boolean) modifies _SpecSCC_10_dline2_2_dline_1,_SpecSCC_10_dline2_2_dline_0; 
+{
+
+	var data_in:boolean;
+	var push_enable:boolean;
+	data_in = data_in_arg;
+	push_enable = push_enable_arg;
+
+if (push_enable) {	
+	_SpecSCC_10_dline2_2_dline_1 = _SpecSCC_10_dline2_2_dline_0;
+	
+	_SpecSCC_10_dline2_2_dline_0 = data_in;
+}
+
+}
+
+	procedure SpecSCC_10_dline2_2_pop(pop_enable_arg: boolean) returns ( ret_SpecSCC_10_dline2_2_pop : boolean) 
+modifies _SpecSCC_10_dline2_2_dline_1; 
+{
+
+	var pop_enable:boolean;
+	pop_enable = pop_enable_arg;
+
+if (pop_enable) {	
+}
+
+ret_SpecSCC_10_dline2_2_pop = _SpecSCC_10_dline2_2_dline_1;
+
+}
+
+	procedure SpecSCC_10_dline1_3_push(data_in_arg: statex,push_enable_arg: boolean) modifies _SpecSCC_10_dline1_3_dline_0; 
+{
+
+	var data_in:statex;
+	var push_enable:boolean;
+	data_in = data_in_arg;
+	push_enable = push_enable_arg;
+
+if (push_enable) {	
+	_SpecSCC_10_dline1_3_dline_0 = data_in;
+}
+
+}
+
+	procedure SpecSCC_10_dline1_3_pop(pop_enable_arg: boolean) returns ( ret_SpecSCC_10_dline1_3_pop : statex) 
+modifies _SpecSCC_10_dline1_3_dline_0; 
+{
+
+	var pop_enable:boolean;
+	pop_enable = pop_enable_arg;
+
+if (pop_enable) {	
+}
+
+ret_SpecSCC_10_dline1_3_pop = _SpecSCC_10_dline1_3_dline_0;
+
+}
+
+	procedure SpecSCC_10_dline1_3_init(data_in_arg: statex) modifies _SpecSCC_10_dline1_3_dline_0; 
+{
+
+	var data_in:statex;
+	data_in = data_in_arg;
+
+_SpecSCC_10_dline1_3_dline_0 = data_in;
+
+}
+
+	procedure SpecSCC_10_dline3_4_push(data_in_arg: integer,push_enable_arg: boolean) modifies _SpecSCC_10_dline3_4_dline_2,_SpecSCC_10_dline3_4_dline_1,_SpecSCC_10_dline3_4_dline_0; 
+{
+
+	var data_in:integer;
+	var push_enable:boolean;
+	data_in = data_in_arg;
+	push_enable = push_enable_arg;
+
+if (push_enable) {	
+	_SpecSCC_10_dline3_4_dline_2 = _SpecSCC_10_dline3_4_dline_1;
+	
+	_SpecSCC_10_dline3_4_dline_1 = _SpecSCC_10_dline3_4_dline_0;
+	
+	_SpecSCC_10_dline3_4_dline_0 = data_in;
+}
+
+}
+
+	procedure SpecSCC_10_dline3_4_pop(pop_enable_arg: boolean) returns ( ret_SpecSCC_10_dline3_4_pop : integer) 
+modifies _SpecSCC_10_dline3_4_dline_2; 
+{
+
+	var pop_enable:boolean;
+	pop_enable = pop_enable_arg;
+
+if (pop_enable) {	
+}
+
+ret_SpecSCC_10_dline3_4_pop = _SpecSCC_10_dline3_4_dline_2;
+
+}
+
+	procedure SpecSCC_10_dline3_5_push(data_in_arg: boolean,push_enable_arg: boolean) modifies _SpecSCC_10_dline3_5_dline_2,_SpecSCC_10_dline3_5_dline_1,_SpecSCC_10_dline3_5_dline_0; 
+{
+
+	var data_in:boolean;
+	var push_enable:boolean;
+	data_in = data_in_arg;
+	push_enable = push_enable_arg;
+
+if (push_enable) {	
+	_SpecSCC_10_dline3_5_dline_2 = _SpecSCC_10_dline3_5_dline_1;
+	
+	_SpecSCC_10_dline3_5_dline_1 = _SpecSCC_10_dline3_5_dline_0;
+	
+	_SpecSCC_10_dline3_5_dline_0 = data_in;
+}
+
+}
+
+	procedure SpecSCC_10_dline3_5_pop(pop_enable_arg: boolean) returns ( ret_SpecSCC_10_dline3_5_pop : boolean) 
+modifies _SpecSCC_10_dline3_5_dline_2; 
+{
+
+	var pop_enable:boolean;
+	pop_enable = pop_enable_arg;
+
+if (pop_enable) {	
+}
+
+ret_SpecSCC_10_dline3_5_pop = _SpecSCC_10_dline3_5_dline_2;
+
+}
+
+	procedure SpecSCC_10_dline3_6_push(data_in_arg: boolean,push_enable_arg: boolean) modifies _SpecSCC_10_dline3_6_dline_2,_SpecSCC_10_dline3_6_dline_1,_SpecSCC_10_dline3_6_dline_0; 
+{
+
+	var data_in:boolean;
+	var push_enable:boolean;
+	data_in = data_in_arg;
+	push_enable = push_enable_arg;
+
+if (push_enable) {	
+	_SpecSCC_10_dline3_6_dline_2 = _SpecSCC_10_dline3_6_dline_1;
+	
+	_SpecSCC_10_dline3_6_dline_1 = _SpecSCC_10_dline3_6_dline_0;
+	
+	_SpecSCC_10_dline3_6_dline_0 = data_in;
+}
+
+}
+
+	procedure SpecSCC_10_dline3_6_pop(pop_enable_arg: boolean) returns ( ret_SpecSCC_10_dline3_6_pop : boolean) 
+modifies _SpecSCC_10_dline3_6_dline_2; 
+{
+
+	var pop_enable:boolean;
+	pop_enable = pop_enable_arg;
+
+if (pop_enable) {	
+}
+
+ret_SpecSCC_10_dline3_6_pop = _SpecSCC_10_dline3_6_dline_2;
+
+}
+
+	procedure SpecSCC_10_dline3_7_push(data_in_arg: boolean,push_enable_arg: boolean) modifies _SpecSCC_10_dline3_7_dline_2,_SpecSCC_10_dline3_7_dline_1,_SpecSCC_10_dline3_7_dline_0; 
+{
+
+	var data_in:boolean;
+	var push_enable:boolean;
+	data_in = data_in_arg;
+	push_enable = push_enable_arg;
+
+if (push_enable) {	
+	_SpecSCC_10_dline3_7_dline_2 = _SpecSCC_10_dline3_7_dline_1;
+	
+	_SpecSCC_10_dline3_7_dline_1 = _SpecSCC_10_dline3_7_dline_0;
+	
+	_SpecSCC_10_dline3_7_dline_0 = data_in;
+}
+
+}
+
+	procedure SpecSCC_10_dline3_7_pop(pop_enable_arg: boolean) returns ( ret_SpecSCC_10_dline3_7_pop : boolean) 
+modifies _SpecSCC_10_dline3_7_dline_2; 
+{
+
+	var pop_enable:boolean;
+	pop_enable = pop_enable_arg;
+
+if (pop_enable) {	
+}
+
+ret_SpecSCC_10_dline3_7_pop = _SpecSCC_10_dline3_7_dline_2;
+
+}
+
+	procedure SpecSCC_10_dline3_8_push(data_in_arg: integer,push_enable_arg: boolean) modifies _SpecSCC_10_dline3_8_dline_2,_SpecSCC_10_dline3_8_dline_1,_SpecSCC_10_dline3_8_dline_0; 
+{
+
+	var data_in:integer;
+	var push_enable:boolean;
+	data_in = data_in_arg;
+	push_enable = push_enable_arg;
+
+if (push_enable) {	
+	_SpecSCC_10_dline3_8_dline_2 = _SpecSCC_10_dline3_8_dline_1;
+	
+	_SpecSCC_10_dline3_8_dline_1 = _SpecSCC_10_dline3_8_dline_0;
+	
+	_SpecSCC_10_dline3_8_dline_0 = data_in;
+}
+
+}
+
+	procedure SpecSCC_10_dline3_8_pop(pop_enable_arg: boolean) returns ( ret_SpecSCC_10_dline3_8_pop : integer) 
+modifies _SpecSCC_10_dline3_8_dline_2; 
+{
+
+	var pop_enable:boolean;
+	pop_enable = pop_enable_arg;
+
+if (pop_enable) {	
+}
+
+ret_SpecSCC_10_dline3_8_pop = _SpecSCC_10_dline3_8_dline_2;
+
+}
+
+	procedure init_single_spec() modifies x,io_state,guard,start_s,loop_s,ccycles,_SpecSCC_10_dline1_3_dline_0; 
+{
+
+var tmpvar_fsmx_init0: statex;
+
+call (tmpvar_fsmx_init0) = fsmx_init();
+x = 305419896;
+io_state = 0;
+guard = true;
+call SpecSCC_10_dline1_3_init(tmpvar_fsmx_init0);
+start_s = true;
+loop_s = true;
+ccycles = (-1);
+
+}
+
+	procedure next_single_spec() modifies loop_s,ccycles,SCC_15_in_0,_io_state_0,io_state,_io_printf_1,SpecSCC_10_in_0,_SpecSCC_10_dline3_1_pop_0,_SpecSCC_10_dline2_2_pop_1,_SpecSCC_10_dline1_3_pop_2,cmd,SpecSCC_10_nextInput,SpecSCC_10_commit,SpecSCC_10_muRollback,SpecSCC_10_rewind,SpecSCC_10_rbwe,SpecSCC_10_selSlowPath_x,_SpecSCC_10_dline3_4_pop_3,_SpecSCC_10_dline3_5_pop_4,_SpecSCC_10_dline3_6_pop_5,_SpecSCC_10_dline3_7_pop_6,_SpecSCC_10_dline3_8_pop_7,SpecSCC_10_mu_x_10,x,_rollBack_SpecSCC_10_28_x_mu_8,_fsm_x_next_11,_mispec_12,_slow_13,_fast_14,_x_9,_rewind_SpecSCC_10_34_15,_rewind_SpecSCC_10_35_16,_rewind_SpecSCC_10_37_17,_rewind_SpecSCC_10_39_18,_rewind_SpecSCC_10_41_19,SpecSCC_10_out_0_var,_guard_0,guard,_i_1,i,SCC_14_out_0_var,start_s,SpecSCC_10_SCC_15_empty_flag,SpecSCC_10_SCC_15_data,SpecSCC_10_SCC_15_full_flag,SCC_14_SpecSCC_10_empty_flag,SCC_14_SpecSCC_10_data,_SpecSCC_10_dline3_1_dline_2,_SpecSCC_10_dline2_2_dline_1,_SpecSCC_10_dline1_3_dline_0,_SpecSCC_10_dline3_4_dline_2,_SpecSCC_10_dline3_5_dline_2,_SpecSCC_10_dline3_6_dline_2,_SpecSCC_10_dline3_7_dline_2,_SpecSCC_10_dline3_8_dline_2,_SpecSCC_10_dline2_2_dline_0,_SpecSCC_10_dline3_1_dline_1,_SpecSCC_10_dline3_1_dline_0,_SpecSCC_10_dline3_4_dline_1,_SpecSCC_10_dline3_4_dline_0,_SpecSCC_10_dline3_5_dline_1,_SpecSCC_10_dline3_5_dline_0,_SpecSCC_10_dline3_8_dline_1,_SpecSCC_10_dline3_8_dline_0,_SpecSCC_10_dline3_6_dline_1,_SpecSCC_10_dline3_6_dline_0,_SpecSCC_10_dline3_7_dline_1,_SpecSCC_10_dline3_7_dline_0,SCC_14_SpecSCC_10_full_flag; 
+{
+
+var tmpvar_SCC_14_SpecSCC_10_full5: boolean;
+var tmpvar_SCC_14_SpecSCC_10_empty1: boolean;
+var tmpvar_SpecSCC_10_out_0_value_14: SpecSCC_10_out_0;
+var tmpvar_fsm_mispec_in_x_value_03: fsm_mispec_in_x;
+var tmpvar_SpecSCC_10_SCC_15_full2: boolean;
+var tmpvar_SpecSCC_10_SCC_15_empty0: boolean;
+var tmpvar_SCC_14_out_0_value_36: SCC_14_out_0;
+
+if (loop_s) {	
+	ccycles = (ccycles + 1);
+	
+	call (tmpvar_SpecSCC_10_SCC_15_empty0) = SpecSCC_10_SCC_15_empty();
+	if ((!tmpvar_SpecSCC_10_SCC_15_empty0)) {	
+		call (SCC_15_in_0) = SpecSCC_10_SCC_15_peek();
+		
+		_io_state_0 = io_state;
+		
+		loop_s = (!(!SCC_15_in_0.p1));
+		
+		_io_printf_1 = 0;
+		
+		io_state = if (SCC_15_in_0.p2) then _io_state_0 else _io_printf_1;
+		
+		if (true) {	
+			call SpecSCC_10_SCC_15_read();
+		}
+	}
+	
+	call (tmpvar_SCC_14_SpecSCC_10_empty1) = SCC_14_SpecSCC_10_empty();
+	call (tmpvar_SpecSCC_10_SCC_15_full2) = SpecSCC_10_SCC_15_full();
+	if (((!tmpvar_SCC_14_SpecSCC_10_empty1) && (!tmpvar_SpecSCC_10_SCC_15_full2))) {	
+		call (SpecSCC_10_in_0) = SCC_14_SpecSCC_10_peek();
+		
+		call (_SpecSCC_10_dline3_1_pop_0) = SpecSCC_10_dline3_1_pop(true);
+		
+		call (_SpecSCC_10_dline2_2_pop_1) = SpecSCC_10_dline2_2_pop(true);
+		
+		call (_SpecSCC_10_dline1_3_pop_2) = SpecSCC_10_dline1_3_pop(true);
+		
+		call (cmd) = fsm_x_command(_SpecSCC_10_dline1_3_pop_2);
+		
+		SpecSCC_10_nextInput = cmd.nextInput;
+		
+		SpecSCC_10_commit = cmd.commit;
+		
+		SpecSCC_10_muRollback = cmd.muRollBack;
+		
+		SpecSCC_10_rewind = cmd.rewind;
+		
+		SpecSCC_10_rbwe = cmd.rbwe;
+		
+		SpecSCC_10_selSlowPath_x = cmd.selSlowPath_x;
+		
+		call (_SpecSCC_10_dline3_4_pop_3) = SpecSCC_10_dline3_4_pop(true);
+		
+		call (_SpecSCC_10_dline3_5_pop_4) = SpecSCC_10_dline3_5_pop(true);
+		
+		call (_SpecSCC_10_dline3_6_pop_5) = SpecSCC_10_dline3_6_pop(true);
+		
+		call (_SpecSCC_10_dline3_7_pop_6) = SpecSCC_10_dline3_7_pop(true);
+		
+		call (_SpecSCC_10_dline3_8_pop_7) = SpecSCC_10_dline3_8_pop(true);
+		
+		SpecSCC_10_mu_x_10 = x;
+		
+		_rollBack_SpecSCC_10_28_x_mu_8 = rollBack_SpecSCC_10_28_x_mu(SpecSCC_10_mu_x_10, SpecSCC_10_muRollback, SpecSCC_10_rbwe);
+		
+		call (tmpvar_fsm_mispec_in_x_value_03) = fsm_mispec_in_x_value_0(if (_SpecSCC_10_dline2_2_pop_1) then 0bv32 else 1bv32);
+		call (_fsm_x_next_11) = fsm_x_next(tmpvar_fsm_mispec_in_x_value_03, _SpecSCC_10_dline1_3_pop_2);
+		
+		call SpecSCC_10_dline1_3_push(_fsm_x_next_11, true);
+		
+		_mispec_12 = mispec(_rollBack_SpecSCC_10_28_x_mu_8);
+		
+		call SpecSCC_10_dline2_2_push(_mispec_12, true);
+		
+		_slow_13 = slow(_rollBack_SpecSCC_10_28_x_mu_8);
+		
+		call SpecSCC_10_dline3_1_push(_slow_13, true);
+		
+		_fast_14 = fast(_rollBack_SpecSCC_10_28_x_mu_8);
+		
+		_x_9 = if (SpecSCC_10_selSlowPath_x == 0bv32) then _fast_14 else _SpecSCC_10_dline3_1_pop_0;
+		
+		call SpecSCC_10_dline3_4_push(_x_9, true);
+		
+		_rewind_SpecSCC_10_34_15 = rewind_SpecSCC_10_34(SpecSCC_10_in_0.p2, SpecSCC_10_rewind, SpecSCC_10_nextInput);
+		
+		x = if (_rewind_SpecSCC_10_34_15) then _rollBack_SpecSCC_10_28_x_mu_8 else _x_9;
+		
+		_rewind_SpecSCC_10_35_16 = rewind_SpecSCC_10_35(SpecSCC_10_in_0.p0_guard, SpecSCC_10_rewind, SpecSCC_10_nextInput);
+		
+		call SpecSCC_10_dline3_5_push(_rewind_SpecSCC_10_35_16, true);
+		
+		_rewind_SpecSCC_10_37_17 = rewind_SpecSCC_10_37(SpecSCC_10_in_0.p1, SpecSCC_10_rewind, SpecSCC_10_nextInput);
+		
+		call SpecSCC_10_dline3_8_push(_rewind_SpecSCC_10_37_17, true);
+		
+		_rewind_SpecSCC_10_39_18 = rewind_SpecSCC_10_39(SpecSCC_10_in_0.p3, SpecSCC_10_rewind, SpecSCC_10_nextInput);
+		
+		call SpecSCC_10_dline3_6_push(_rewind_SpecSCC_10_39_18, true);
+		
+		_rewind_SpecSCC_10_41_19 = rewind_SpecSCC_10_41(SpecSCC_10_in_0.p4, SpecSCC_10_rewind, SpecSCC_10_nextInput);
+		
+		call SpecSCC_10_dline3_7_push(_rewind_SpecSCC_10_41_19, true);
+		
+		call (tmpvar_SpecSCC_10_out_0_value_14) = SpecSCC_10_out_0_value_1(_SpecSCC_10_dline3_4_pop_3, _SpecSCC_10_dline3_5_pop_4, _SpecSCC_10_dline3_6_pop_5, _SpecSCC_10_dline3_7_pop_6, _SpecSCC_10_dline3_8_pop_7);
+		call (SpecSCC_10_out_0_var) = SpecSCC_10_to_SCC_15_out_value_2(SpecSCC_10_commit == 0bv1, tmpvar_SpecSCC_10_out_0_value_14);
+		
+		call SpecSCC_10_SCC_15_write(SpecSCC_10_out_0_var);
+		
+		if (cmd.nextInput == 0bv1) {	
+			call SCC_14_SpecSCC_10_read();
+		}
+	}
+	
+	call (tmpvar_SCC_14_SpecSCC_10_full5) = SCC_14_SpecSCC_10_full();
+	if ((!tmpvar_SCC_14_SpecSCC_10_full5)) {	
+		_guard_0 = guard;
+		
+		_i_1 = i;
+		
+		i = if (_guard_0) then _i_1 else (_i_1 + 1);
+		
+		guard = (i < 1024);
+		
+		call (tmpvar_SCC_14_out_0_value_36) = SCC_14_out_0_value_3(guard, _i_1, _guard_0, _guard_0, _guard_0);
+		call (SCC_14_out_0_var) = SCC_14_to_SpecSCC_10_out_value_4(true, tmpvar_SCC_14_out_0_value_36);
+		
+		call SCC_14_SpecSCC_10_write(SCC_14_out_0_var);
+	}
+	
+	start_s = false;
+}
+
+}
+
+	procedure init_implsmt() modifies x; 
+{
+
+
+x = 0;
+
+}
+
+	procedure next_implsmt() modifies x; 
+{
+
+
+x = (x + 1);
+
+}
+
+	procedure init_specsmt() modifies x_spec; 
+{
+
+
+x_spec = 0;
+
+}
+
+	procedure next_specsmt() modifies x_spec; 
+{
+
+
+x_spec = (x_spec + 2);
+x_spec = (x_spec - 1);
+
+}
+
+var t : integer;
+var _finished123: boolean;
+	init {
+		t =0;
+	_finished123 = false;
+	//;
+	call init_single_spec();
+	call init_implsmt();
+	call init_specsmt();
+	}
+
+	next {
+		t'= t +1;
+	if (!(true)) {
+		_finished123' = true;
+	}
+	if (!_finished123') {
+		if (true) {	
+			//;
+			
+		}
+	}
+	call next_single_spec();
+	//call next_implsmt();
+	call next_specsmt();
+	}
+
+			invariant main_inv: (
+					history(x_spec, 1) ==
+					history(x, 1) &&
+					true
+					) ==> (
+					x_spec ==
+					x &&
+					true
+					) || (
+					history(x_spec, 3) ==
+					history(x, 3) &&
+					true
+					) ==> (
+					history(x_spec, 2) ==
+					x &&
+					true
+					);
+		
+			control {
+				induction;
+				check;
+				print_results;
+			}
+			}
