@@ -29,7 +29,7 @@ class UclidRunner {
 			SpeculativeLoopPipelining.preprocess(p, compilationOptions);
 
 			GecosToUclidConverter.apply(p,"./src-c-gen/uclid/")
-
+			// for some reason, uclid is not recognized unless full path
 			CodegenUtils.execCommand(#["/home/ulysse/Documents/uclid/target/universal/uclid-0.9.5/bin/uclid", "-m", "./src-c-gen/uclid/" + p.name + "/main.ucl"])
 		}
 
