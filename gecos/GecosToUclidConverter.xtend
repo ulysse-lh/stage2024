@@ -662,11 +662,9 @@ class GecosToUclidConverter {
 		invariant main_inv: (
 				«FOR v : varToCheck»
 					history(«v», «bestInitiationInterval») ==
-					history(«v.substring(0, v.length - "_spec".length)», «bestInitiationInterval») &&
+					history(«v.substring(0, v.length - "_spec".length)», «bestInitiationInterval») && 
 				«ENDFOR»
-				«IF !varToCheck.empty»
-					true
-				«ENDIF»
+				true
 				) ==> (
 				«FOR v : varToCheck»
 					«IF bestInitiationInterval - 1 > 0»
@@ -676,17 +674,13 @@ class GecosToUclidConverter {
 					«ENDIF»
 					«v.substring(0, v.length - "_spec".length)» &&
 				«ENDFOR»
-				«IF !varToCheck.empty»
-					true
-				«ENDIF»
+				true
 				) || (
 				«FOR v : varToCheck»
 					history(«v», «worstInitiationInterval») ==
 					history(«v.substring(0, v.length - "_spec".length)», «worstInitiationInterval») &&
 				«ENDFOR»
-				«IF !varToCheck.empty»
-					true
-				«ENDIF»
+				true
 				) ==> (
 				«FOR v : varToCheck»
 					«IF worstInitiationInterval - 1 > 0»
@@ -696,9 +690,7 @@ class GecosToUclidConverter {
 					«ENDIF»
 					«v.substring(0, v.length - "_spec".length)» &&
 				«ENDFOR»
-				«IF !varToCheck.empty»
-					true
-				«ENDIF»
+				true
 				);
 		'''
 	}
