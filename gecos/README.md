@@ -10,4 +10,4 @@ This folder contains:
 - `single_spec.ucl` which is the compilation output of `single_spec_UCLID_compliant.cpp`.
 - `single_spec_invariant_autogen.cpp` which is a version that allows the auto generation of invariant (on dummy functions).
 - `single_spec_invariant_example.ucl` which is the compilation output of `single_spec_invariant_autogen.cpp`.
-- `single_spec_cleanedup.ucl` which a complete revamped of the original single_spec.cpp, focused on readability.
+- `single_spec_cleanedup.ucl` which is a complete revamped version of the original single_spec.cpp, focused on readability.
