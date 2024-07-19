@@ -701,7 +701,8 @@ void init_single_spec() {
 }
 
 void next_single_spec() {
-				while (loop_s) {
+				#pragma HLS PIPELINE II=1
+				if (loop_s) {
 
 
 						ccycles = ccycles + 1;
@@ -777,14 +778,39 @@ void next_single_spec() {
 
 }
 
+
+int x_spec;
+
+#pragma impl
+void init_implsmt() {
+	x = 0;
+}
+
+#pragma impl
+void next_implsmt() {
+#pragma HLS PIPELINE II=1
+#pragma HLS PIPELINE worst II=3
+	x++;
+}
+
+#pragma spec
+void init_specsmt() {
+	x_spec = 0;
+}
+
+#pragma spec
+void next_specsmt() {
+	x_spec += 2;
+	x_spec--;
+}
+
+bool dummy_toplevel_var;
 #pragma toplevel
 void run() {
 	init:
 	;
-	;
 	while(true) {
 		next:
-		;
-		;
+		{}
 	}
 }
