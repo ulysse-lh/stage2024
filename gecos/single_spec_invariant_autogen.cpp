@@ -804,15 +804,13 @@ void next_specsmt() {
 	x_spec--;
 }
 
-
+bool dummy_toplevel_var;
 #pragma toplevel
 void run() {
 	init:
 	;
-	;
 	while(true) {
 		next:
-		;
-		;
+		{}
 	}
 }
