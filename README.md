@@ -15,7 +15,7 @@ The file `gecos/GecosToUclidConverter.xtend` is a modified version of the gecos'
 - No `goto`, switch fallthrough, `break`, `continue`, `return` as a goto in disguised, etc.
 - No assignment-as-an-expression, i.e. no `if ((a = b / 5))` nor `j = i++;`.
 
-The translation step C++ to UCLID has the following builtin behaviour:
+The translation step C++ to UCLID has the following builtin behaviours:
 
 1. One function annotated with `#pragma toplevel` is required for the whole project. That function must have the following skeleton:
     ```C
@@ -40,9 +40,9 @@ The translation step C++ to UCLID has the following builtin behaviour:
     }
     next {
         if (!finished123) {
-            finished123 = some_condition;
+            finished123' = some_condition;
         }
-        if (!finished123) {
+        if (!finished123') {
             ... // code B
         }
     }
@@ -77,7 +77,16 @@ The translation step C++ to UCLID has the following builtin behaviour:
     To be more general, the invariant `main_inv` has the following form:
 
     ```uclid
-    invariant main_inv: $for all variable v edited by g such that f edits a variable called v_spec, add 'history(v_spec, n) == history(v, n)' to the implication lefthand side$ ==> $for all variable v edited by g such that f edits a variable called v_spec, add 'history(v_spec, n - 1) == v' to the implication righthand side$
+    invariant main_inv:
+        $
+        for all variable v edited by g such that f edits a variable called v_spec,
+        add "history(v_spec, n) == history(v, n)" to the implication lefthand side
+        $
+        ==>
+        $
+        for all variable v edited by g such that f edits a variable called v_spec,
+        add "history(v_spec, n - 1) == v" to the implication righthand side
+        $
     ```
 
 ### Practical notes
@@ -135,7 +144,7 @@ next {
 
 is valid UCLID code.
 
-## UCLID platform thoughts
+## UCLID platform retrospective
 
 Intermediary invariants seem to be needed practically every time to prove an actual goal. For instance, `static_sched.ucl` requires 3 intermediary invariants in order to prove the goal. The intermediary invariants often contain trivial observations on integer bounds (here about the loop index and the cycle counter) or on valid transitions (which can be trivially verified using an incidence matrix). Increasing the `induction` bound beyond what is necessary (here around 10) does not seem to be useful in such case.
 
@@ -168,7 +177,10 @@ Then, every time a set instruction with target `myvar` (resp. `myvar_spec`) woul
 Finally, the invariant generated would simply be:
 
 ```uclid
-invariant main_inv: forall (k: integer) :: 0 <= k < myvar_count_for_proof && k < myvar_spec_count_for_proof ==> myvar_array_for_proof[k] == myvar_spec_array_for_proof[k];
+invariant main_inv: forall (k: integer) :: (
+    0 <= k < myvar_count_for_proof && k < myvar_spec_count_for_proof
+    ==> myvar_array_for_proof[k] == myvar_spec_array_for_proof[k]
+);
 ```
 
 ## GecosToUclidConverter.xtend structure
