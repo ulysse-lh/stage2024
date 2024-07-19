@@ -364,16 +364,29 @@ class GecosToUclidConverter {
 			while («cond») {
 				«body»
 				«FOR st : tempCalls»
-				st;
+				«st»
 				«ENDFOR»
 			}
 		'''
 	}
 
 	def static dispatch String convertBlock(WhileBlock b) {
+		var tempCalls = new ArrayList<String>()
+		tempCallStorage.add(tempCalls)
+		
+		val cond = convertInstr((b.testBlock as BasicBlock).instructions.head)
+		tempCallStorage.removeLast
+		val body = convertBlock(b.bodyBlock)
+		
 		'''
-			while («convertInstr((b.testBlock as BasicBlock).instructions.head)») {
-				«convertBlock(b.bodyBlock)»
+			«FOR st : tempCalls»
+			«st»
+			«ENDFOR»
+			while («cond») {
+				«body»
+				«FOR st : tempCalls»
+				«st»
+				«ENDFOR»
 			}
 		'''
 	}
